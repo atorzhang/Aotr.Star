@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="sqlSugarCore" Version="5.0.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ator.DbEntity\Ator.DbEntity.csproj" />
+    <ProjectReference Include="..\Ator.Model\Ator.Model.csproj" />
+    <ProjectReference Include="..\Ator.Utility\Ator.Utility.csproj" />
+  </ItemGroup>
+
+</Project>

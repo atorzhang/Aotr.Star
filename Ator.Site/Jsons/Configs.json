@@ -1,0 +1,37 @@
+{
+  //数据库连接
+  "ConnMain": "server=35.229.247.236;database=dbae;userid=root;pwd=ZJsq17605005858@;port=3306;sslmode=none;",
+  //数据库类型 MySql = 0, SqlServer = 1, Sqlite = 2, Oracle = 3,  PostgreSQL = 4
+  "DbType": "0",
+  //数据缓存地址
+  "RedisPath": "192.168.1.1:6379",
+  //-------------------------短信配置-----------------------------
+  //是否开启短信验证
+  "IsValidDynamic": "false",
+  //短信签名
+  "DysmsNickname": "",
+  //短信ID
+  "DysmsKeyId": "",
+  //短信Secret
+  "DysmsKeySecret": "",
+  //短信验证码模板
+  "DysmsDynamicTemplate": "",
+  //-------------------------微信配置-----------------------------
+  //微信企业号应用CorpID
+  "WXCorpID": "",
+  //微信企业号应用Secret 
+  "WXSecret": "",
+  //微信企业号应用ID
+  "WXAgentId": "",
+  //-------------------------邮件配置(暂时用于服务错误提示)-----------------------------
+  //Smtp 服务器
+  "SmtpHost": "smtp.163.com",
+  //Smtp 服务器端口
+  "SmtpPort": "25",
+  //发送者Email地址
+  "FromEmailAddress": "",
+  //发送者Email密码
+  "FormEmailPassword": "",
+  //收件人 Email 列表，多个邮件地址之间用 半角逗号 分开
+  "ToEmaiAddress": ""
+}

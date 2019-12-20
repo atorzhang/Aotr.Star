@@ -5,11 +5,11 @@
   "homeInfo": {
     "title": "首页",
     "icon": "fa fa-home",
-    "href": "page/welcome-1.html?mpi=m-p-i-0"
+    "href": "/Admin/WelCome/index"
   },
   "logoInfo": {
     "title": "LayuiMini",
-    "image": "images/logo.png",
+    "image": "/images/logo.png",
     "href": ""
   },
   "menuInfo": {
@@ -137,7 +137,7 @@
       "child": [
         {
           "title": "图标列表",
-          "href": "page/icon.html",
+          "href": "/Admin/Home/Icon",
           "icon": "fa fa-dot-circle-o",
           "target": "_self"
         },

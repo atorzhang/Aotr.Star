@@ -10,11 +10,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Ator.DAL\Ator.DAL.csproj" />
+    <ProjectReference Include="..\Ator.DbEntity\Ator.DbEntity.csproj" />
     <ProjectReference Include="..\Ator.Model\Ator.Model.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Areas\Admin\Controllers\Sys\" />
+    <ProjectReference Include="..\Ator.Utility\Ator.Utility.csproj" />
   </ItemGroup>
 
 

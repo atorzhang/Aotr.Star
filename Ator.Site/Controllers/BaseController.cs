@@ -13,6 +13,7 @@ namespace Ator.Site
     /// <summary>
     /// 控制器基类
     /// </summary>
+    
     public class BaseController : Controller
     {
         protected LayuiData apiResult;

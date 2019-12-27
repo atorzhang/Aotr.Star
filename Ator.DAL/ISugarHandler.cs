@@ -1,18 +1,4 @@
-﻿#region << 版 本 注 释 >>
-/*---------------------------------------------------------------- 
-* 类 名 称 ：ISqlRepository
-* 类 描 述 ：    
-* 作    者 ：罗泽光
-* 创建时间 ：2018/7/23 15:56:57
-* 更新时间 ：2018/7/23 15:56:57
-* 说    明 ：
-* 版 本 号 ：v1.0.0.0
-*******************************************************************
-* Copyright @ xnlzg 2018. All rights reserved.
-*******************************************************************
-//----------------------------------------------------------------*/
-#endregion
-
+﻿
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -808,6 +794,8 @@ namespace Ator.DAL
         /// <param name="totalCount">总行数</param>
         /// <returns>实体</returns>
         List<T> QueryPageList<T>(QueryDescriptor query, out int totalCount) where T : class, new();
+
+        List<T> QueryPageList<T>(Expression<Func<T, bool>> whereLambda, List<OrderByClause> OrderBys, int PageIndex, int PageSize, out int totalCount) where T : class, new();
 
         /// <summary>
         /// 通过多值查询数据集

@@ -1,23 +1,4 @@
-﻿#region << 版 本 注 释 >>
-/*---------------------------------------------------------------- 
-* 类 名 称 ：SqlRepository
-* 类 描 述 ：    
-* 作    者 ：罗泽光
-* 创建时间 ：2018/7/23 15:52:47
-* 更新时间 ：2018/7/23 15:52:47
-* 说    明 ：
-using (var db = DbFactory.InstanceSuger())
-{
-    db.BeginTran(); 
-    var userInfo = db.Query<SysUsers>(m => m.UserName == userLogin.UserName); 
-    db.CommitTran();
-}
-* 版 本 号 ：v1.0.0.0
-*******************************************************************
-* Copyright @ xnlzg 2018. All rights reserved.
-*******************************************************************
-//----------------------------------------------------------------*/
-#endregion
+﻿
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -1770,13 +1751,35 @@ namespace Ator.DAL
             }
            
         }
+
+        /// <summary>
+        /// 分页查询
+        /// </summary>
+        /// <typeparam name="T">泛型参数(集合成员的类型)</typeparam>
+        /// <param name="query">过滤条件</param>
+        /// <param name="totalCount">总行数</param>
+        /// <returns>实体</returns>
+        public List<T> QueryPageList<T>(Expression<Func<T, bool>> whereLambda, List<OrderByClause> OrderBys, int PageIndex,int PageSize, out int totalCount) where T : class, new()
+        {
+            var listDatas = DbContext.Queryable<T>().With(SqlWith.NoLock);
+            listDatas = listDatas.Where(whereLambda);
+            if (OrderBys != null)
+            {
+                var orderBys = ParseOrderBy(OrderBys);
+                listDatas = listDatas.OrderBy(orderBys);
+            }
+            totalCount = 0;
+            var datas = listDatas.ToPageList(PageIndex, PageSize, ref totalCount);
+            return datas;
+        }
+
         /// <summary>
         /// 查询集合-多值
         /// </summary>
         /// <typeparam name="T">泛型参数(集合成员的类型)</typeparam>
         /// <param name="inFieldName">字段名</param>
         /// <param name="inValues">数据集合</param>
-       /// <returns>值</returns>
+        /// <returns>值</returns>
         public List<T> In<T>(string inFieldName, List<dynamic> inValues) where T : class, new()
         {
             return DbContext.Queryable<T>().With(SqlWith.NoLock).In(inFieldName, inValues).ToList(); 

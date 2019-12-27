@@ -17,7 +17,11 @@ namespace Ator.Site.Controllers
         {
             var db = SugarHandler.Instance();
             var aa = new QueryDescriptor();
-            var lst = db.QueryList<SysLinkItem>(); 
+            var lst = db.QueryWhereList<SysLinkItem>(o => o.Status == 1);
+
+           
+            var ct = 0;
+            var lst2 = db.QueryPageList<SysLinkItem>(aa,out ct);
             return Json(lst);
         }
     }

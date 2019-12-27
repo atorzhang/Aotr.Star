@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ator.DbEntity\Ator.DbEntity.csproj" />
+    <ProjectReference Include="..\Ator.Model\Ator.Model.csproj" />
+  </ItemGroup>
+
+</Project>

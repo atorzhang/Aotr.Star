@@ -14,7 +14,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
-using NLog.Extensions.Logging;
 using AutoMapper;
 using Ator.Model;
 using System.Reflection;

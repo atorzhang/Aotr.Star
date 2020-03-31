@@ -79,10 +79,12 @@ namespace Ator.Site
 
             //注册mvc控制器和视图
             services.AddControllersWithViews();
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggingBuilder loggingBuilder)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -98,11 +100,6 @@ namespace Ator.Site
             app.UseRouting();//使用路由
 
             app.UseAuthorization();//使用认证
-
-            #region Nlog配置
-            loggingBuilder.AddNLog();
-            NLog.LogManager.LoadConfiguration("nlog.config");
-            #endregion
 
             app.UseAuthentication();//认证配置
 

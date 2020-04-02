@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SqlSugar;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -14,6 +15,7 @@ namespace Ator.DbEntity.Sys
         /// 主键
         /// </summary>
         [Key]
+        [SugarColumn(IsPrimaryKey = true)]
         public string SysOperateRecordId { get; set; } 
 
         /// <summary>

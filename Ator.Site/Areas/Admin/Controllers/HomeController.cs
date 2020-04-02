@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Ator.IService;
+using Ator.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ator.Site.Areas.Admin.Controllers
@@ -10,6 +12,11 @@ namespace Ator.Site.Areas.Admin.Controllers
     [Route("Admin/[controller]/[action]")]
     public class HomeController : BaseController
     {
+        ISysMenuService _sysMenuService;
+        public HomeController(ISysMenuService menuService)
+        {
+            _sysMenuService = menuService;
+        }
 
         [HttpGet]
         public IActionResult Index()
@@ -23,5 +30,15 @@ namespace Ator.Site.Areas.Admin.Controllers
             return View();
         }
         
+        /// <summary>
+        /// 获取菜单项
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> Menus()
+        {
+            var menus = await _sysMenuService.GetMenu();
+            return Json(menus);
+        }
+
     }
 }

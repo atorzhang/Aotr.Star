@@ -109,7 +109,8 @@
             element = layui.element,
             layer = layui.layer;
 
-        layuimini.init('/api/init.json');
+        //layuimini.init('/api/init.json');
+        layuimini.init('/Admin/Home/Menus');
 
         $('.login-out').on("click", function () {
             $.post("", {}, function (res) {

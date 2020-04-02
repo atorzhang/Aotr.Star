@@ -13,6 +13,7 @@ namespace Ator.DbEntity.Sys
     {
         [Key]
         [StringLength(32)]
+        [SugarColumn(IsPrimaryKey = true)]
         public string SysCmsColumnId { get; set; }
 
         /// <summary>

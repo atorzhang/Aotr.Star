@@ -46,9 +46,6 @@ namespace Ator.Site
             //添加缓存服务注册
             services.AddSingleton(typeof(Utility.CacheService.ICacheService), typeof(MemoryCacheService));
 
-            //通过反射注入各种服务
-            services.AddServiceScoped();
-
             #region 认证配置
             services.AddAuthentication(options =>
                 {
@@ -75,6 +72,9 @@ namespace Ator.Site
                 op.InitKeyType = InitKeyType.Attribute;
                 op.IsShardSameThread = true;
             });
+
+            //通过反射注入各种服务
+            services.AddServiceScoped();
 
             //注册mvc控制器和视图
             services.AddControllersWithViews();

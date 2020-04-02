@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SqlSugar;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,6 +13,7 @@ namespace Ator.DbEntity.Sys
     {
         [Key]
         [StringLength(32)]
+        [SugarColumn(IsPrimaryKey = true)]
         public string SysLinkItemId { get; set; } 
 
         [Display(Name = "链接类型ID")]

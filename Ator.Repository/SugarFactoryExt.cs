@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Ator.Repository
 {
@@ -26,6 +27,20 @@ namespace Ator.Repository
         {
             return db.Queryable<TSource>().InSingle(id);
         }
+        /// <summary>
+        /// [异步]根据主键获取实体对象
+        /// </summary>
+        /// <typeparam name="TSource">数据源类型</typeparam>
+        /// <param name="db"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static async Task<TSource> GetByIdAsync<TSource>(this SqlSugarClient db, dynamic id) where TSource : EntityDb, new()
+        {
+            return await Task.Run( () =>
+            {
+                return db.Queryable<TSource>().InSingle(id);
+            });
+        }
 
         /// <summary>
         /// 根据主键获取实体对象
@@ -39,6 +54,23 @@ namespace Ator.Repository
         {
             TSource model = db.Queryable<TSource>().InSingle(id);
             return model.Map<TSource, TMap>();
+        }
+
+        /// <summary>
+        /// [异步]根据主键获取实体对象
+        /// </summary>
+        /// <typeparam name="TSource">数据源类型</typeparam>
+        /// <typeparam name="TMap">数据源映射类型</typeparam>
+        /// <param name="db"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static async Task<TMap> GetByIdAsync<TSource, TMap>(this SqlSugarClient db, dynamic id) where TSource : EntityDb, new()
+        {
+            return await Task.Run(() =>
+            {
+                TSource model = db.Queryable<TSource>().InSingle(id);
+                return model.Map<TSource, TMap>();
+            });
         }
 
         #endregion
@@ -58,6 +90,21 @@ namespace Ator.Repository
         }
 
         /// <summary>
+        /// [异步]根据条件获取单个实体对象
+        /// </summary>
+        /// <typeparam name="TSource">数据源类型</typeparam>
+        /// <param name="db"></param>
+        /// <param name="whereExp"></param>
+        /// <returns></returns>
+        public static async Task<TSource> GetAsync<TSource>(this SqlSugarClient db, Expression<Func<TSource, bool>> whereExp) where TSource : EntityDb, new()
+        {
+            return await Task.Run(() =>
+            {
+                return db.Queryable<TSource>().Where(whereExp).Single();
+            });
+        }
+
+        /// <summary>
         /// 根据条件获取单个实体对象
         /// </summary>
         /// <typeparam name="TSource">数据源类型</typeparam>
@@ -69,6 +116,23 @@ namespace Ator.Repository
         {
             TSource model = db.Queryable<TSource>().Where(whereExp).Single();
             return model.Map<TSource, TMap>();
+        }
+
+        /// <summary>
+        /// [异步]根据条件获取单个实体对象
+        /// </summary>
+        /// <typeparam name="TSource">数据源类型</typeparam>
+        /// <typeparam name="TMap">数据源映射类型</typeparam>
+        /// <param name="db"></param>
+        /// <param name="whereExp">条件表达式</param>
+        /// <returns></returns>
+        public static async Task<TMap> GetAsync<TSource, TMap>(this SqlSugarClient db, Expression<Func<TSource, bool>> whereExp) where TSource : EntityDb, new()
+        {
+            return await Task.Run(() =>
+            {
+                TSource model = db.Queryable<TSource>().Where(whereExp).Single();
+                return model.Map<TSource, TMap>();
+            });
         }
 
         #endregion

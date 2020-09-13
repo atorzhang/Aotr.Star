@@ -8,6 +8,6 @@ namespace Ator.IService
 {
     public interface ISysMenuService
     {
-        Task<RootMenu> GetMenu(string userId = "");
+        Task<MenusInfoResultDTO> GetMenu(string userId = "");
     }
 }

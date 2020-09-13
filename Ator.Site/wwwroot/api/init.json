@@ -8,14 +8,16 @@
     "href": "/Admin/WelCome/index"
   },
   "logoInfo": {
-    "title": "LayuiMini",
-    "image": "/images/logo.png",
+    "title": "LAYUI MINI",
+    "image": "images/logo.png",
     "href": ""
   },
-  "menuInfo": {
-    "currency": {
+  "menuInfo": [
+    {
       "title": "常规管理",
       "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
       "child": [
         {
           "title": "主页模板",
@@ -32,6 +34,12 @@
             {
               "title": "主页二",
               "href": "page/welcome-2.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "主页三",
+              "href": "page/welcome-3.html",
               "icon": "fa fa-tachometer",
               "target": "_self"
             }
@@ -92,6 +100,12 @@
               "href": "page/login-2.html",
               "icon": "fa fa-viacoin",
               "target": "_blank"
+            },
+            {
+              "title": "登录-3",
+              "href": "page/login-3.html",
+              "icon": "fa fa-tags",
+              "target": "_blank"
             }
           ]
         },
@@ -131,13 +145,15 @@
         }
       ]
     },
-    "component": {
+    {
       "title": "组件管理",
       "icon": "fa fa-lemon-o",
+      "href": "",
+      "target": "_self",
       "child": [
         {
           "title": "图标列表",
-          "href": "/Admin/Home/Icon",
+          "href": "page/icon.html",
           "icon": "fa fa-dot-circle-o",
           "target": "_self"
         },
@@ -170,60 +186,20 @@
           "href": "page/editor.html",
           "icon": "fa fa-edit",
           "target": "_self"
-        }
-      ]
-    },
-    "other": {
-      "title": "其它管理",
-      "icon": "fa fa-slideshare",
-      "child": [
-        {
-          "title": "多级菜单",
-          "href": "",
-          "icon": "fa fa-meetup",
-          "target": "",
-          "child": [
-            {
-              "title": "按钮1",
-              "href": "page/button.html",
-              "icon": "fa fa-calendar",
-              "target": "_self",
-              "child": [
-                {
-                  "title": "按钮2",
-                  "href": "page/button.html",
-                  "icon": "fa fa-snowflake-o",
-                  "target": "_self",
-                  "child": [
-                    {
-                      "title": "按钮3",
-                      "href": "page/button.html",
-                      "icon": "fa fa-snowflake-o",
-                      "target": "_self"
-                    },
-                    {
-                      "title": "表单4",
-                      "href": "page/form.html",
-                      "icon": "fa fa-calendar",
-                      "target": "_self"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
         },
         {
-          "title": "失效菜单",
-          "href": "page/error.html",
-          "icon": "fa fa-superpowers",
+          "title": "省市县区选择器",
+          "href": "page/area.html",
+          "icon": "fa fa-rocket",
           "target": "_self"
         }
       ]
     },
-    "other1": {
-      "title": "其它管理1",
+    {
+      "title": "其它管理",
       "icon": "fa fa-slideshare",
+      "href": "",
+      "target": "_self",
       "child": [
         {
           "title": "多级菜单",
@@ -233,25 +209,25 @@
           "child": [
             {
               "title": "按钮1",
-              "href": "page/button.html",
+              "href": "page/button.html?v=1",
               "icon": "fa fa-calendar",
               "target": "_self",
               "child": [
                 {
                   "title": "按钮2",
-                  "href": "page/button.html",
+                  "href": "page/button.html?v=2",
                   "icon": "fa fa-snowflake-o",
                   "target": "_self",
                   "child": [
                     {
                       "title": "按钮3",
-                      "href": "page/button.html",
+                      "href": "page/button.html?v=3",
                       "icon": "fa fa-snowflake-o",
                       "target": "_self"
                     },
                     {
                       "title": "表单4",
-                      "href": "page/form.html",
+                      "href": "page/form.html?v=1",
                       "icon": "fa fa-calendar",
                       "target": "_self"
                     }
@@ -269,5 +245,5 @@
         }
       ]
     }
-  }
+  ]
 }

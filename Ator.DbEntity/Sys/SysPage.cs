@@ -28,6 +28,11 @@ namespace Ator.DbEntity.Sys
         [StringLength(255)]
         public string SysPageUrl { get; set; }
 
+        [Display(Name = "页面地址1")]
+        [StringLength(255)]
+        public string SysPageTargetUrl { get; set; }
+
+        
         [Display(Name = "页面图标")]
         [StringLength(255)]
         public string SysPageImg { get; set; }

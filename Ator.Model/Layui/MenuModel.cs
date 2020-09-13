@@ -7,12 +7,25 @@ namespace Ator.Model
     /// <summary>
     /// 菜单跟节点
     /// </summary>
-    public class RootMenu
+    public class MenusInfoResultDTO
     {
-        public Clearinfo clearInfo { get; set; } = new Clearinfo();
-        public Homeinfo homeInfo { get; set; } = new Homeinfo();
-        public Logoinfo logoInfo { get; set; } = new Logoinfo();
-        public Dictionary<string, Menuinfo> menuInfo { get; set; } = new Dictionary<string, Menuinfo>();
+        /// <summary>
+        /// 权限菜单树
+        /// </summary>
+        public List<SystemMenu> MenuInfo { get; set; } = new List<SystemMenu>();
+
+        /// <summary>
+        /// logo
+        /// </summary>
+        public LogoInfo LogoInfo { get; set; } = new LogoInfo();
+
+        /// <summary>
+        /// Home
+        /// </summary>
+        public HomeInfo HomeInfo { get; set; } = new HomeInfo();
+
+        public Clearinfo Clearinfo { get; set; } = new Clearinfo();
+
     }
 
     /// <summary>
@@ -26,33 +39,66 @@ namespace Ator.Model
     /// <summary>
     /// 主页信息
     /// </summary>
-    public class Homeinfo
+    public class HomeInfo
     {
         public string title { get; set; } = "首页";
-        public string icon { get; set; } = "fa fa-home";
-        public string href { get; set; } = "/Admin/WelCome/Index";
+        public string href { get; set; } = "page/welcome-1.html?t=1";
     }
 
     /// <summary>
     /// Logo信息
     /// </summary>
-    public class Logoinfo
+    public class LogoInfo
     {
-        public string title { get; set; }
-        public string image { get; set; }
-        public string href { get; set; }
+        public string title { get; set; } = "sdsdsdsff";
+        public string image { get; set; } = "images/logo.png";
+        public string href { get; set; } = "";
     }
 
     /// <summary>
-    /// 菜单信息
+    /// 树结构对象
     /// </summary>
-    public class Menuinfo
+    public class SystemMenu
     {
-        public string title { get; set; }
-        public string href { get; set; }
-        public string icon { get; set; }
-        public string target { get; set; }
-        public List<Menuinfo> child { get; set; }
-    }
+        /// <summary>
+        /// 数据ID
+        /// </summary>
+        public string Id { get; set; }
 
+        /// <summary>
+        /// 父级ID
+        /// </summary>
+        public string PId { get; set; }
+
+        /// <summary>
+        /// 节点名称
+        /// </summary>
+        public string Title { get; set; }
+
+        /// <summary>
+        /// 节点地址
+        /// </summary>
+        public string Href { get; set; }
+
+        /// <summary>
+        /// 新开Tab方式
+        /// </summary>
+        public string Target { get; set; } = "_self";
+
+        /// <summary>
+        /// 菜单图标样式
+        /// </summary>
+        public string Icon { get; set; }
+
+        /// <summary>
+        /// 排序
+        /// </summary>
+        public int Sort { get; set; }
+
+        /// <summary>
+        /// 子集
+        /// </summary>
+        public List<SystemMenu> Child { get; set; }
+    }
+ 
 }

@@ -61,6 +61,8 @@ layui.define(["jquery", "miniMenu", "element","miniTab", "miniTheme"], function 
                         multiModule: options.multiModule,
                         menuChildOpen: options.menuChildOpen,
                         maxTabNum: options.maxTabNum,
+                        menuList: data.menuInfo,
+                        homeInfo: data.homeInfo,
                         listenSwichCallback: function () {
                             miniAdmin.renderDevice();
                         }
@@ -128,9 +130,6 @@ layui.define(["jquery", "miniMenu", "element","miniTab", "miniTheme"], function 
             }
         },
 
-        /**
-         * 进入全屏
-         */
         fullScreen: function () {
             var el = document.documentElement;
             var rfs = el.requestFullScreen || el.webkitRequestFullScreen;
@@ -145,6 +144,10 @@ layui.define(["jquery", "miniMenu", "element","miniTab", "miniTheme"], function 
                 el.msRequestFullscreen();
             } else if (el.oRequestFullscreen) {
                 el.oRequestFullscreen();
+            } else if (el.webkitRequestFullscreen) {
+                el.webkitRequestFullscreen();
+            } else if (el.mozRequestFullScreen) {
+                el.mozRequestFullScreen();
             } else {
                 miniAdmin.error('浏览器不支持全屏调用！');
             }
@@ -167,6 +170,10 @@ layui.define(["jquery", "miniMenu", "element","miniTab", "miniTheme"], function 
                 el.msExitFullscreen();
             } else if (el.oRequestFullscreen) {
                 el.oCancelFullScreen();
+            }else if (el.mozCancelFullScreen) {
+                el.mozCancelFullScreen();
+            } else if (el.webkitCancelFullScreen) {
+                el.webkitCancelFullScreen();
             } else {
                 miniAdmin.error('浏览器不支持全屏调用！');
             }
@@ -225,7 +232,7 @@ layui.define(["jquery", "miniMenu", "element","miniTab", "miniTheme"], function 
             var isIOS = (/iPhone|iPod|iPad/i).test(ua) && !isAndroid;
             var isWinPhone = (/Windows Phone|ZuneWP7/i).test(ua);
             var clientWidth = document.documentElement.clientWidth;
-            if (!isAndroid && !isIOS && !isWinPhone && clientWidth > 768) {
+            if (!isAndroid && !isIOS && !isWinPhone && clientWidth > 1024) {
                 return false;
             } else {
                 return true;
@@ -283,7 +290,7 @@ layui.define(["jquery", "miniMenu", "element","miniTab", "miniTheme"], function 
                     tips = $(this).prop("innerHTML"),
                     isShow = $('.layuimini-tool i').attr('data-side-fold');
                 if (isShow == 0 && tips) {
-                    tips = "<ul class='layui-nav layui-nav-tree layui-this'><li class='layui-nav-item layui-nav-itemed'>"+tips+"</li></ul>" ;
+                    tips = "<ul class='layuimini-menu-left-zoom layui-nav layui-nav-tree layui-this'><li class='layui-nav-item layui-nav-itemed'>"+tips+"</li></ul>" ;
                     window.openTips = layer.tips(tips, $(this), {
                         tips: [2, '#2f4056'],
                         time: 300000,

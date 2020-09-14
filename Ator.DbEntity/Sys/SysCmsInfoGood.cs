@@ -13,17 +13,20 @@ namespace Ator.DbEntity.Sys
     {
         [Key]
         [StringLength(32)]
-        [SugarColumn(IsPrimaryKey = true)]
+        [SugarColumn(IsPrimaryKey = true,Length = 32)]
         public string SysCmsInfoGoodId { get; set; } 
 
         [Display(Name = "点赞人")]
         [StringLength(32)]
+        [SugarColumn(Length = 32, IsNullable = true)]
         public string SysUserId { get; set; } = "";
 
         [StringLength(32)]
+        [SugarColumn(Length = 32, IsNullable = true)]
         public string SysCmsInfoId { get; set; }="";
 
         [StringLength(100)]
+        [SugarColumn(Length = 100, IsNullable = true)]
         public string Ip { get; set; }
 
 

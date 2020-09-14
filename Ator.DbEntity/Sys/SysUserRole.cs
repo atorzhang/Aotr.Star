@@ -16,8 +16,10 @@ namespace Ator.DbEntity.Sys
         [SugarColumn(IsPrimaryKey = true)]
         public string SysUserRoleId { get; set; }
         [StringLength(32)]
+        [SugarColumn(Length = 32, IsNullable = true)]
         public string SysUserId { get; set; }
         [StringLength(32)]
+        [SugarColumn(Length = 32, IsNullable = true)]
         public string SysRoleId { get; set; }
 
     }

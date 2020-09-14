@@ -17,19 +17,23 @@ namespace Ator.DbEntity.Sys
         public string SysSettingId { get; set; } 
 
         [Display(Name = "设置名称")]
-        [StringLength(50)]
+        [StringLength(100)]
+        [SugarColumn(Length = 100, IsNullable = true)]
         public string SysSettingName { get; set; }
 
         [Display(Name = "设置分组")]
-        [StringLength(50)]
+        [StringLength(100)]
+        [SugarColumn(Length = 100, IsNullable = true)]
         public string SysSettingGroup { get; set; }
 
         [Display(Name = "设置类型")]
-        [StringLength(50)]
+        [StringLength(100)]
+        [SugarColumn(Length = 100, IsNullable = true)]
         public string SysSettingType { get; set; }
 
         [Display(Name = "设置值")]
-        [StringLength(500)]
+        [StringLength(1000)]
+        [SugarColumn(Length = 1000, IsNullable = true)]
         public string SetValue { get; set; }
 
     }

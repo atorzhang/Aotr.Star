@@ -129,7 +129,7 @@ namespace Ator.Utility.Helper
             string verifyCode = string.Empty;
             Random random = new Random();
             if(length == 0)
-                length = random.Next(4, 6);
+                length = random.Next(4, 5);
             switch (type)
             {
                 case VerifyCodeType.NumberVerifyCode:

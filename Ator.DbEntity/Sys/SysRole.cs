@@ -16,8 +16,9 @@ namespace Ator.DbEntity.Sys
         [SugarColumn(IsPrimaryKey = true)]
         public string SysRoleId { get; set; } 
 
-        [StringLength(32)]
+        [StringLength(200)]
         [Display(Name = "权限名称")]
+        [SugarColumn(Length = 200, IsNullable = true)]
         public string RoleName { get; set; }
 
     }

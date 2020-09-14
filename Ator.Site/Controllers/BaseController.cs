@@ -7,27 +7,23 @@ using Ator.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using SqlSugar;
 
 namespace Ator.Site
 {
     /// <summary>
     /// 控制器基类
     /// </summary>
-    
+
     public class BaseController : Controller
     {
+        public SqlSugarClient DbContext;//注入数据库操作类
         protected LayuiData apiResult;
         protected string resStr = string.Empty;
         protected bool result = false;
         public static readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings() { DateFormatString = "yyyy-MM-dd HH:mm:ss" };//Json时间格式化
         #region 属性
-        public UserInfo _UserInfo
-        {
-            get
-            {
-                return new UserInfo(HttpContext);
-            }
-        }
+
         public string GuidKey
         {
             get
@@ -35,26 +31,26 @@ namespace Ator.Site
                 return Guid.NewGuid().ToString("N");
             }
         }
-        /// <summary>
-        /// 登陆用户名，未登陆成功为空
-        /// </summary>
-        public string UserName
+
+        //登录数据保存
+        public UserViewModel CurrentLoginUser
         {
             get
             {
-                return HttpContext.User.Claims.Where(o => o.Type == ClaimTypes.Name).FirstOrDefault()?.Value;
+                var principal = HttpContext.User;
+                if (principal != null)
+                {
+                    return new UserViewModel()
+                    {
+                        UserName = principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value,
+                        Mobile = principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.MobilePhone)?.Value,
+                        Id = principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value
+                    };
+                }
+                return null;
             }
         }
-        /// <summary>
-        /// 会员唯一编码，未登陆成功为空
-        /// </summary>
-        public string Id
-        {
-            get
-            {
-                return HttpContext.User.Claims.Where(o => o.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value;
-            }
-        }
+
         /// <summary>
         /// 返回实体验证错误信息
         /// </summary>
@@ -147,70 +143,12 @@ namespace Ator.Site
             }
             return Error();
         }
+    }
 
-        //登录数据保存
-        public class UserInfo
-        {
-            public HttpContext httpContext;
-            public string UserName
-            {
-                get
-                {
-                    return httpContext.Session.GetString("UserName");
-                }
-                set
-                {
-                    httpContext.Session.SetString("UserName", value);
-                }
-            }
-            public string UserId
-            {
-                get
-                {
-                    return httpContext.Session.GetString("UserId");
-                }
-                set
-                {
-                    httpContext.Session.SetString("UserId", value);
-                }
-            }
-            public string Avatar
-            {
-                get
-                {
-                    return httpContext.Session.GetString("Avatar");
-                }
-                set
-                {
-                    httpContext.Session.SetString("Avatar", value);
-                }
-            }
-            public string UserUnit
-            {
-                get
-                {
-                    return httpContext.Session.GetString("UserUnit");
-                }
-                set
-                {
-                    httpContext.Session.SetString("UserUnit", value);
-                }
-            }
-            public string UserType
-            {
-                get
-                {
-                    return httpContext.Session.GetString("UserType");
-                }
-                set
-                {
-                    httpContext.Session.SetString("UserType", value);
-                }
-            }
-            public UserInfo(HttpContext context)
-            {
-                httpContext = context;
-            }
-        }
+    public class UserViewModel
+    {
+        public string UserName { get; set; }
+        public string Mobile { get; set; }
+        public string Id { get; set; }
     }
 }

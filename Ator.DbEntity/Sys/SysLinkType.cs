@@ -13,19 +13,22 @@ namespace Ator.DbEntity.Sys
     {
         [Key]
         [StringLength(32)]
-        [SugarColumn(IsPrimaryKey = true)]
+        [SugarColumn(IsPrimaryKey = true,Length = 32)]
         public string SysLinkTypeId { get; set; } 
 
         [Display(Name = "链接类型名称")]
         [StringLength(32)]
+        [SugarColumn(Length = 32, IsNullable = true)]
         public string SysLinkTypeName { get; set; }
 
         [Display(Name = "分组")]
         [StringLength(32)]
+        [SugarColumn(Length = 32, IsNullable = true)]
         public string Group { get; set; }
 
         [Display(Name = "Logo")]
         [StringLength(200)]
+        [SugarColumn(Length = 200,IsNullable = true)]
         public string SysLinkTypeLogo { get; set; }
 
     }

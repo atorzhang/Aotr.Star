@@ -18,10 +18,12 @@ namespace Ator.DbEntity.Sys
 
         [Display(Name = "页面ID")]
         [StringLength(32)]
+        [SugarColumn(Length = 32, IsNullable = true)]
         public string SysPageId { get; set; }
 
         [Display(Name = "角色ID")]
         [StringLength(32)]
+        [SugarColumn(Length = 32, IsNullable = true)]
         public string SysRoleId { get; set; }
 
     }

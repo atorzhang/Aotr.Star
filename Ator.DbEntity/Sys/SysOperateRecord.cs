@@ -16,6 +16,7 @@ namespace Ator.DbEntity.Sys
         /// </summary>
         [Key]
         [SugarColumn(IsPrimaryKey = true)]
+
         public string SysOperateRecordId { get; set; } 
 
         /// <summary>
@@ -23,6 +24,7 @@ namespace Ator.DbEntity.Sys
         /// </summary>
         [Required]
         [MaxLength(50)]
+        [SugarColumn(Length = 50, IsNullable = true)]
         public string TableName { get; set; }
 
         /// <summary>
@@ -30,17 +32,20 @@ namespace Ator.DbEntity.Sys
         /// </summary>
         [Required]
         [MaxLength(50)]
+        [SugarColumn(Length = 50, IsNullable = true)]
         public string ClassName { get; set; }
 
         /// <summary>
         /// 操作方法名称
         /// </summary>
         [Required]
-        [MaxLength(50)]
+        [MaxLength(200)]
+        [SugarColumn(Length = 200, IsNullable = true)]
         public string MethodName { get; set; }
 
         [Display(Name = "操作人Id")]
         [StringLength(32)]
+        [SugarColumn(Length = 32, IsNullable = true)]
         public string SysUserId { get; set; } = "";
 
         /// <summary>
@@ -48,6 +53,7 @@ namespace Ator.DbEntity.Sys
         /// </summary>
         [Display(Name = "操作人用户名")]
         [StringLength(50)]
+        [SugarColumn(Length = 50, IsNullable = true)]
         public string UserName { get; set; } = "";
 
         /// <summary>
@@ -77,6 +83,7 @@ namespace Ator.DbEntity.Sys
         [Required]
         [Display(Name = "操作内容")]
         [MaxLength(255)]
+        [SugarColumn(Length = 255, IsNullable = true)]
         public string Operate { get; set; }
 
     }

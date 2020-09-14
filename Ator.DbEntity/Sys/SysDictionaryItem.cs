@@ -13,19 +13,22 @@ namespace Ator.DbEntity.Sys
     {
         [Key]
         [StringLength(32)]
-        [SugarColumn(IsPrimaryKey = true)]
+        [SugarColumn(IsPrimaryKey = true,Length = 32)]
         public string SysDictionaryItemId { get; set; } 
 
         [Display(Name = "字典ID")]
         [StringLength(32)]
+        [SugarColumn(Length = 32, IsNullable = true)]
         public string SysDictionaryId { get; set; }
 
         [Display(Name = "字典项值")]
-        [StringLength(255)]
+        [StringLength(1000)]
+        [SugarColumn(Length = 1000, IsNullable = true)]
         public string SysDictionaryItemValue { get; set; }
 
         [Display(Name = "字典项名称")]
-        [StringLength(32)]
+        [StringLength(255)]
+        [SugarColumn(Length = 255, IsNullable = true)]
         public string SysDictionaryItemName { get; set; }
 
     }

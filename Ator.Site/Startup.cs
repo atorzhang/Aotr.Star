@@ -19,6 +19,7 @@ using Ator.Model;
 using System.Reflection;
 using Ator.DbEntity.Factory;
 using SqlSugar;
+using Ator.DbEntity.Sys;
 
 namespace Ator.Site
 {
@@ -46,20 +47,6 @@ namespace Ator.Site
             //添加缓存服务注册
             services.AddSingleton(typeof(Utility.CacheService.ICacheService), typeof(MemoryCacheService));
 
-            #region 认证配置
-            services.AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                }).AddCookie(options =>
-                {
-                //Cookie的middleware配置
-                options.LoginPath = new PathString("/Admin/Home/Login");
-                    options.AccessDeniedPath = new PathString("/Admin/Home/Login");
-                //options.ExpireTimeSpan = //有效期
-            });
-            #endregion
-
             //注入AutoMapper服务
             services.AddAutoMapper(typeof(AutoMapperProfileConfiguration));
 
@@ -76,8 +63,23 @@ namespace Ator.Site
             //通过反射注入各种服务
             services.AddServiceScoped();
 
+            #region 认证配置
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+            //Cookie的middleware配置
+            .AddCookie(options =>
+            {
+                options.LoginPath = new PathString("/Admin/Home/Login");
+                options.AccessDeniedPath = new PathString("/Admin/Home/Login");
+                //options.ExpireTimeSpan = TimeSpan.FromDays(1);
+            });
+            #endregion
+
             //注册mvc控制器和视图
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
             
         }
@@ -98,14 +100,25 @@ namespace Ator.Site
 
             app.UseRouting();//使用路由
 
+            app.UseSession();//使用Session
+
             app.UseAuthorization();//使用认证
 
             app.UseAuthentication();//认证配置
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto }); //添加IP获取
 
-
-            
+            //codefist初始化数据库
+            #region codefist初始化数据库
+            //SqlSugarClient db = new SqlSugarClient(new ConnectionConfig()
+            //{
+            //    ConnectionString = "server=127.0.0.1;database=dbmjyj;userid=root;pwd=123456;port=3306;sslmode=none;",
+            //    DbType = DbType.MySql,
+            //    IsAutoCloseConnection = true,
+            //    InitKeyType = InitKeyType.Attribute
+            //});
+            //db.CodeFirst.InitTables(typeof(SysCmsColumn), typeof(SysCmsInfo), typeof(SysCmsInfoComment), typeof(SysCmsInfoGood), typeof(SysDictionary), typeof(SysDictionaryItem), typeof(SysLinkItem), typeof(SysLinkType), typeof(SysLog), typeof(SysOperateRecord), typeof(SysPage), typeof(SysRole), typeof(SysRolePage), typeof(SysSetting), typeof(SysUser), typeof(SysUserRole)); 
+            #endregion
 
             app.UseEndpoints(endpoints =>
             {

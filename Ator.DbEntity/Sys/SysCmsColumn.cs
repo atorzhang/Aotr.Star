@@ -13,14 +13,15 @@ namespace Ator.DbEntity.Sys
     {
         [Key]
         [StringLength(32)]
-        [SugarColumn(IsPrimaryKey = true)]
+        [SugarColumn(IsPrimaryKey = true,Length = 32)]
         public string SysCmsColumnId { get; set; }
 
         /// <summary>
         /// 栏目名称
         /// </summary>
         [Display(Name = "栏目名称")]
-        [StringLength(50)]
+        [StringLength(100)]
+        [SugarColumn(Length = 100,IsNullable = true)]
         public string ColumnName { get; set; }
 
         /// <summary>
@@ -28,6 +29,7 @@ namespace Ator.DbEntity.Sys
         /// </summary>
         [Display(Name = "栏目logo")]
         [StringLength(255)]
+        [SugarColumn(Length = 255, IsNullable = true)]
         public string ColumnLogo { get; set; }
 
         /// <summary>
@@ -35,6 +37,7 @@ namespace Ator.DbEntity.Sys
         /// </summary>
         [Display(Name = "栏目说明")]
         [StringLength(1000)]
+        [SugarColumn(Length = 1000, IsNullable = true)]
         public string ColumnDescript { get; set; }
 
         /// <summary>
@@ -42,6 +45,7 @@ namespace Ator.DbEntity.Sys
         /// </summary>
         [Display(Name = "父级栏目编码")]
         [StringLength(32)]
+        [SugarColumn(Length = 32, IsNullable = true)]
         public string ColumnParent { get; set; } = "";
 
     }

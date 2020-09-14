@@ -124,7 +124,7 @@
     <div class="layui-container">
         <div class="admin-login-background">
             <div class="layui-form login-form">
-                <form class="layui-form" action="/Admin/Home/DoLogin">
+                <form class="layui-form" action="/Admin/Home/DoLogin" method="POST">
                     <div class="layui-form-item logo-title">
                         <h1>LayuiMini后台登录</h1>
                     </div>
@@ -138,7 +138,7 @@
                     </div>
                     <div class="layui-form-item">
                         <label class="layui-icon layui-icon-vercode" for="captcha"></label>
-                        <input type="text" name="captcha" lay-verify="required|captcha" placeholder="图形验证码" autocomplete="off" class="layui-input verification captcha" value="">
+                        <input type="text" name="PIN" lay-verify="required|captcha" placeholder="图形验证码" autocomplete="off" class="layui-input verification captcha" value="">
                         <div class="captcha-img">
                             <img id="captchaPic" src="/Admin/Home/MixVerifyCode" title="点击更换"  onclick="this.src='/Admin/Home/MixVerifyCode?11'+Math.random()" >
                         </div>
@@ -193,20 +193,41 @@
             var loginObj = {
                 UserName : data.username,
                 Password : data.password,
-                PIN : data.captcha
+                PIN: data.PIN
             }
-            $.post("/Admin/Home/DoLogin", loginObj, function (res) {
-                if (res.success) {
-                    layer.msg('登录成功', { icon: 1 });
-                    return true;
-                }
-                else {
-                    layer.msg("登陆失败，" + res.msg, { icon: 0 });
+            var isJump = false;
+            var _index = layer.load();
+            $.ajax({
+                url: "/Admin/Home/DoLogin",    //请求的url地址
+                dataType: "json",   //返回格式为json
+                async: false,//请求是否异步，默认为异步，这也是ajax重要特性
+                data: loginObj,    //参数值
+                type: "POST",   //请求方式
+                success: function (res) {
+                    layer.close(_index);
+                    //请求成功时处理
+                    if (res.success) {
+                        layer.msg('登录成功', { icon: 1 });
+                        isJump = true;
+                    }
+                    else {
+                        layer.msg("登陆失败，" + res.msg, { icon: 0 });
+                        $("#captchaPic").click();
+                    }
+                },
+                complete: function () {
+                    //请求完成的处理
+                },
+                error: function () {
+                    //请求出错处理
+                    layer.close(_index);
+                    layer.msg("登陆失败", { icon: 0 });
                     $("#captchaPic").click();
                 }
-            },"json")
-            
-            return false;
+            });
+
+       
+            return isJump;
         });
     });
     </script>

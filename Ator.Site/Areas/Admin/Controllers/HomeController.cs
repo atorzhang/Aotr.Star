@@ -119,7 +119,7 @@ namespace Ator.Site.Areas.Admin.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> DoLogin(LoginViewModel loginViewModel)
+        public IActionResult DoLogin(LoginViewModel loginViewModel)
         {
             loginViewModel.Ip = HttpContext.Connection.RemoteIpAddress.ToString();
             string backPin = HttpContext.Session.GetString("ValidateCode");
@@ -144,7 +144,17 @@ namespace Ator.Site.Areas.Admin.Controllers
             resStr = _sysUserService.DoLogin(loginViewModel);
             if(loginViewModel.IsRedict == "0" && string.IsNullOrEmpty(resStr))
             {
-                return Ok();
+                var userModel = DbContext.Get<SysUser>(o => o.UserName == loginViewModel.UserName);
+                //登陆操作结果
+                var claims = new List<Claim>(){
+                    new Claim(ClaimTypes.Name,loginViewModel.UserName),
+                    new Claim(ClaimTypes.Role,"manage"),
+                    new Claim(ClaimTypes.NameIdentifier,userModel?.SysUserId),
+                    new Claim(ClaimTypes.AuthenticationMethod,userModel?.SysUserId),
+                };
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                return Ok("/Admin/Home/Index");
             }
             if (string.IsNullOrEmpty(resStr))
             {
@@ -158,8 +168,8 @@ namespace Ator.Site.Areas.Admin.Controllers
                 };
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
        
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
-                return Redirect(string.IsNullOrEmpty(loginViewModel.ReturnUrl) ? "/Admin/Home/Index" : loginViewModel.ReturnUrl);
+                HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                return RedirectToAction("Index");
             }
             else
             {
@@ -190,5 +200,17 @@ namespace Ator.Site.Areas.Admin.Controllers
             return Json(menus);
         }
 
+        /// <summary>
+        /// 清理缓存接口
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> Clear()
+        {
+            return Json(new
+            {
+                code = 1,
+                msg = "清理缓存成功"
+            });
+        }
     }
 }

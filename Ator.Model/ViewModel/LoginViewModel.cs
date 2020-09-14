@@ -42,6 +42,10 @@ namespace Ator.Model
         [Display(Name = "跳转页")]
         public string ReturnUrl { get; set; }
 
+        /// <summary>
+        /// 是否跳转
+        /// </summary>
+        [Display(Name = "跳转页")]
         public string IsRedict { get; set; } = "0";
 
         #endregion

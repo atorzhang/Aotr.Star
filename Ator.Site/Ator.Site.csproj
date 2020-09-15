@@ -22,6 +22,8 @@
 
   <ItemGroup>
     <None Include="Areas\Admin\Views\KindEditorTest\Index.cshtml" />
+    <None Include="wwwroot\js\admin\form.js" />
+    <None Include="wwwroot\js\admin\list.js" />
     <None Include="wwwroot\js\lay-module\echarts\echarts.js" />
     <None Include="wwwroot\js\lay-module\echarts\echartsTheme.js" />
     <None Include="wwwroot\js\lay-module\iconPicker\iconPickerFa.js" />

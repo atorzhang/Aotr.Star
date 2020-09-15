@@ -55,7 +55,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         {
             ViewBag.id = id;
             ViewBag.isCreate = string.IsNullOrEmpty(id);
-            var model = DbContext.GetById<SysCmsColumn>(id);
+            var model = DbContext.GetById<SysCmsColumn>(id,true);
             ViewBag.SysCmsColumnParentSelect = _SysCmsColumnService.GetColumnList();
             return View(model ?? new SysCmsColumn() { Status = 1 });
         }
@@ -81,7 +81,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         [HttpGet]
         public async Task<IActionResult> GetData(string id)
         {
-            var data = await DbContext.GetByIdAsync<SysCmsColumn>(id);
+            var data = await DbContext.GetByIdAsync<SysCmsColumn>(id,true);
             return Ok(data);
         }
 
@@ -90,7 +90,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         /// </summary>
         /// <param name="sysUserSearchViewModel"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> GetPageData(SysCmsColumnSearchViewModel search)
         {
             var predicate = PredicateBuilder.New<SysCmsColumn>(true);//查询条件
@@ -146,7 +146,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
                 //定义可以修改的列
                 var lstColumn = new List<string>()
                 {
-                    nameof(SysCmsColumn.Remark), nameof(SysCmsColumn.Sort), nameof(SysCmsColumn.Status), nameof(SysCmsColumn.ColumnName), nameof(SysCmsColumn.ColumnLogo), nameof(SysCmsColumn.ColumnDescript),nameof(SysCmsColumn.ColumnParent)
+                    nameof(SysCmsColumn.SysCmsColumnId),nameof(SysCmsColumn.Remark), nameof(SysCmsColumn.Sort), nameof(SysCmsColumn.Status), nameof(SysCmsColumn.ColumnName), nameof(SysCmsColumn.ColumnLogo), nameof(SysCmsColumn.ColumnDescript),nameof(SysCmsColumn.ColumnParent)
                 };
                 if (!string.IsNullOrEmpty(columns))//固定过滤只修改某字段
                 {
@@ -157,6 +157,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
                     else
                     {
                         lstColumn = lstColumn.Where(o => columns.Split(',').Contains(o)).ToList();
+                        lstColumn.Add(nameof(SysCmsColumn.SysCmsColumnId));
                     }
                 }
                 result = await DbContext.UpdateAsync<SysCmsColumn>(model, lstColumn);

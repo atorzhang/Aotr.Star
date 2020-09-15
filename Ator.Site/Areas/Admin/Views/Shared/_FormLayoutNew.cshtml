@@ -1,16 +1,16 @@
 ﻿@*/*****************************************************************
-    *Module Name:_ListLayout.cshtml
+    *Module Name:_FormLayout.cshtml
     *Module Date:2018-10-30
     *Module Auth:Jomzhang
-    *Description:列表页布局页
+    *Description:数据页布局页
     *Others:
     *evision History:
     *DateRel VerNotes
     *Blog:https://www.cnblogs.com/jomzhang/
     *****************************************************************/*@
 <!DOCTYPE html>
-
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>@ViewBag.Title</title>
@@ -18,8 +18,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" href="~/lib/layui-v2.5.5/css/layui.css" charset="utf-8">
-    <link rel="stylesheet" href="/css/font.css">
-    <link rel="stylesheet" href="/css/weadmin.css">
+    <link rel="stylesheet" href="/css/public.css" media="all">
     <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
     <!--[if lt IE 9]>
       <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
@@ -27,22 +26,12 @@
     <![endif]-->
     @RenderSection("Heads", required: false)
 </head>
-<body>
-    <div class="weadmin-nav">
-        <span>
-            <a href="javascript:;">首页 &gt; </a>
-            <a href="javascript:;">@ViewBag.SecondName &gt; </a>
-            <a>
-                <cite>@ViewBag.PageName</cite>
-            </a>
-        </span>
-        <a class="layui-btn layui-btn-sm" style="line-height:1.8em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
 
-            <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
-            @*<i class="layui-icon" style="line-height:30px">ဂ</i>*@
-        </a>
+<body>
+    <div class="weadmin-body">
+        @RenderBody()
+
     </div>
-    @RenderBody()
     <environment include="Development">
         <script src="~/lib/jquery/jquery-1.12.4.min.js" charset="utf-8"></script>
     </environment>
@@ -54,8 +43,12 @@
                 integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
         </script>
     </environment>
+
     <script src="~/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
-    <script src="~/js/admin/list.js" charset="utf-8"></script>
+    <script src="~/js/lay-config.js?v=@DateTime.Now.DayOfYear" charset="utf-8"></script>
+    <script src="~/js/layform.js" charset="utf-8"></script>
     @RenderSection("Scripts", required: false)
 </body>
+
 </html>
+

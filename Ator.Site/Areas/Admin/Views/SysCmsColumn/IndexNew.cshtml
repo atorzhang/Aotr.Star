@@ -1,0 +1,105 @@
+﻿
+@{
+    ViewData["Title"] = "栏目管理";
+    Layout = "~/Areas/Admin/Views/Shared/_ListLayout.cshtml";
+    ViewData["SecondName"] = "系统管理";
+    ViewData["PageName"] = "栏目管理";
+}
+
+<fieldset class="table-search-fieldset">
+    <legend>搜索信息</legend>
+    <div style="margin: 10px 10px 10px 10px">
+        <form class="layui-form layui-form-pane" action="">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">页面名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="SysCmsColumnName" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">页面编号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="SysCmsColumnNum" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button type="submit" id="searchBtn" class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</fieldset>
+
+<script type="text/html" id="currentToolbar">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm data-add-btn" lay-event="add"> 添加 </button>
+        <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>
+        <button class="layui-btn layui-btn-sm data-add-btn" lay-event="checkPass"><i class="layui-icon layui-icon-ok"></i> 通过 </button>
+        <button class="layui-btn layui-btn-sm data-add-btn" lay-event="checkNoPass"><i class="layui-icon layui-icon-close"></i> 不通过 </button>
+    </div>
+</script>
+
+<table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+<script type="text/html" id="currentTableBar">
+    <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
+    @*<a class="layui-btn layui-btn-xs data-count-edit" lay-event="subDetail">详情</a>*@
+    <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+</script>
+
+<script type="text/html" id="switchTpl">
+    <!-- 状态显示 -->
+    <input type="checkbox" id="{{ d.SysCmsColumnId}}" name="Status" value="1" lay-skin="switch" lay-text="是|否" lay-filter="statusFilter" {{ d.Status == 1 ? 'checked' : '' }}>
+</script>
+
+@section Scripts{
+    <script>
+        _init = function (form, table) {
+            _idName = 'SysCmsColumnId';
+            _dataUrl = '/Admin/SysCmsColumn/GetPageData';
+            _formUrl = '/Admin/SysCmsColumn/Form';
+            _deleteUrl = '/Admin/SysCmsColumn/Deletes';
+            //_cols = [[
+            //    { type: 'checkbox', width: 50 }
+            //    , { field: 'SysCmsColumnId', width: 100, title: 'ID' }
+            //    , { field: 'ColumnName', width: 100, title: '栏目名称',  sort: true }
+            //    , { field: 'ColumnLogo', width: 100, title: '栏目logo',  sort: true }
+            //    , { field: 'ColumnDescript', width: 100, title: '栏目说明',  sort: true }
+            //    , { field: 'ColumnParent', width: 100, title: '父级栏目'  }
+
+            //    , { field: 'Sort', width: 100, title: '排序', sort: true }
+            //    , { field: 'Remark', width: 100, title: '备注', sort: true }
+            //    , { field: 'CreateTime', width: 100, title: '创建时间', width: 120, sort: true }
+            //    , { field: 'Status',width: 100, title: '状态', width: 80, sort: true }
+            //    , { title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center" }
+            //]]
+            _cols = [[
+                { type: "checkbox", width: 50 },
+                { field: 'sysCmsColumnId', width: 100, title: 'ID' },
+                { field: 'columnName', width: 90, title: '栏目名称' },
+                { field: 'columnLogo', width: 130, title: '栏目logo' },
+                { field: 'columnDescript', width: 140, title: '栏目说明' },
+                { field: 'sort', width: 100, title: '排序', sort: true },
+                { title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center" }
+            ]];
+            _tableToolClick = function (obj, table, layer) {
+                //if (obj.event === 'subDetail') {
+                //    var index = layer.open({
+                //        title: _editTitle,
+                //        type: 2,
+                //        shade: 0.2,
+                //        maxmin: true,
+                //        shadeClose: true,
+                //        area: ['75%', '75%'],
+                //        content: '/Admin/SysCmsColumn/Index?Id=' + obj.data[_idName],
+                //    });
+                //    return false;
+                //}
+            }
+        };      
+        </script>
+
+
+}
+

@@ -1,8 +1,8 @@
 ﻿@*/*****************************************************************
-    *Module Name:_FormLayout.cshtml
-    *Module Date:2018-10-30
+    *Module Name:_ListLayout.cshtml
+    *Module Date:2020-09-15
     *Module Auth:Jomzhang
-    *Description:数据页布局页
+    *Description:列表页布局页
     *Others:
     *evision History:
     *DateRel VerNotes
@@ -10,31 +10,24 @@
     *****************************************************************/*@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <title>@ViewBag.Title</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link rel="stylesheet" href="~/lib/layui-v2.5.5/css/layui.css" charset="utf-8">
-    <link rel="stylesheet" href="/css/font.css">
-    <link rel="stylesheet" href="/css/weadmin.css">
-    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
-    <!--[if lt IE 9]>
-      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
-      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/css/public.css?v=@DateTime.Now.DayOfYear" media="all">
     @RenderSection("Heads", required: false)
 </head>
-
 <body>
-    <div class="weadmin-body">
-        @RenderBody()
-
+    <div class="layuimini-container">
+        <div class="layuimini-main">
+            @RenderBody()
+        </div>
     </div>
     <environment include="Development">
-        <script src="~/lib/jquery/jquery-1.12.4.min.js" charset="utf-8"></script>
+        <script src="~/lib/jquery/jquery-1.12.4.min.js"></script>
     </environment>
     <environment exclude="Development">
         <script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.12.4.min.js"
@@ -45,8 +38,9 @@
         </script>
     </environment>
     <script src="~/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
-    <script src="/js/admin/form.js" charset="utf-8"></script>
+    <script src="~/js/lay-config.js?v=@DateTime.Now.DayOfYear" charset="utf-8"></script>
+    <script src="~/js/laylist.js?v=@DateTime.Now.DayOfYear"></script>
+    <script src="~/lib/xm-select/xm-select.js"></script>
     @RenderSection("Scripts", required: false)
 </body>
-
 </html>

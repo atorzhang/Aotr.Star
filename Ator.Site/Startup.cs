@@ -81,6 +81,7 @@ namespace Ator.Site
                     //统一设置JsonResult中的日期格式    
                     option.JsonSerializerOptions.Converters.Add(new Rule.Config.DateTimeConverter());
                     option.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+                    option.JsonSerializerOptions.PropertyNamingPolicy = null;
                 });
         }
 

@@ -23,8 +23,16 @@ namespace Ator.Repository
         /// <param name="db"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static TSource GetById<TSource>(this SqlSugarClient db, dynamic id) where TSource : EntityDb, new()
+        public static TSource GetById<TSource>(this SqlSugarClient db, dynamic id, bool nullIsObj = false) where TSource : EntityDb, new()
         {
+            if (id == null)
+            {
+                if (nullIsObj)
+                {
+                    return new TSource();
+                }
+                return null;
+            }
             return db.Queryable<TSource>().InSingle(id);
         }
         /// <summary>
@@ -34,8 +42,16 @@ namespace Ator.Repository
         /// <param name="db"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static async Task<TSource> GetByIdAsync<TSource>(this SqlSugarClient db, dynamic id) where TSource : EntityDb, new()
+        public static async Task<TSource> GetByIdAsync<TSource>(this SqlSugarClient db, dynamic id,bool nullIsObj = false) where TSource : EntityDb, new()
         {
+            if (id == null)
+            {
+                if (nullIsObj)
+                {
+                    return new TSource();
+                }
+                return null;
+            }
             return await Task.Run( () =>
             {
                 return db.Queryable<TSource>().InSingle(id);
@@ -374,11 +390,19 @@ namespace Ator.Repository
         /// <param name="db"></param>
         /// <param name="updateObj"></param>
         /// <returns></returns>
-        public static async Task<bool> UpdateAsync<TSource>(this SqlSugarClient db, TSource updateObj,List<string> lstColum) where TSource : EntityDb, new()
+        public static async Task<bool> UpdateAsync<TSource>(this SqlSugarClient db, TSource updateObj,List<string> columns) where TSource : EntityDb, new()
         {
             return await Task.Run(() =>
             {
-                return db.Updateable(updateObj).SetColumns(o => lstColum.Contains(o.ToString())).ExecuteCommand() > 0;
+                var dic = new Dictionary<string, object> { };
+                foreach (System.Reflection.PropertyInfo p in typeof(TSource).GetProperties())
+                {
+                    if (columns.Contains(p.Name))
+                    {
+                        dic.Add(p.Name, p.GetValue(updateObj));
+                    }
+                }
+                return db.Updateable<TSource>(dic).ExecuteCommand() > 0;
             });
         }
         #endregion

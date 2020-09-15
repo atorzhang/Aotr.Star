@@ -58,24 +58,26 @@
     <script src="/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
     <script src="/js/lay-config.js?v=1.0.4" charset="utf-8"></script>
     <script>
-    layui.use(['form','miniTab'], function () {
+        layui.use(['jquery','form','miniTab'], function () {
         var form = layui.form,
             layer = layui.layer,
+            $ = layui.jquery,
             miniTab = layui.miniTab;
 
         //监听提交
         form.on('submit(saveBtn)', function (data) {
-            if (data.new_password != data.again_password) {
+            if (data.field.new_password != data.field.again_password) {
                 layer.msg("两次新密码不一致");
                 return false;
             }
-            $.post("/Admin/Home/DoChangePwd", { oldPwd =data.old_password, newPwd=data.new_password }, function (res) {
+            $.post("/Admin/Home/DoChangePwd", { oldPwd: data.field.old_password, newPwd: data.field.new_password }, function (res) {
                 if (res.success) {
-                    layer.msg("修改成功");
-                    miniTab.deleteCurrentByIframe();
+                    layer.msg("修改成功", function () {
+                        miniTab.deleteCurrentByIframe();
+                    });
                 }
                 else {
-                    layer.msg("修改失败", res.msg);
+                    layer.msg("修改失败,"+ res.msg);
                 }
             }, "json");
             return false;

@@ -64,22 +64,21 @@ namespace Ator.Site
             services.AddServiceScoped();
 
             #region 认证配置
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            })
-            //Cookie的middleware配置
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
             {
                 options.LoginPath = new PathString("/Admin/Home/Login");
-                options.AccessDeniedPath = new PathString("/Admin/Home/Login");
-                //options.ExpireTimeSpan = TimeSpan.FromDays(1);
             });
             #endregion
 
             //注册mvc控制器和视图
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddControllersWithViews()
+                .AddRazorRuntimeCompilation()
+                .AddJsonOptions(option =>
+                {
+                    //统一设置JsonResult中的日期格式    
+                    option.JsonSerializerOptions.Converters.Add(new Rule.Config.DateTimeConverter());
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -100,9 +99,9 @@ namespace Ator.Site
 
             app.UseSession();//使用Session
 
-            app.UseAuthorization();//使用认证
-
             app.UseAuthentication();//认证配置
+
+            app.UseAuthorization();//使用认证
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto }); //添加IP获取
 
@@ -115,7 +114,8 @@ namespace Ator.Site
             //    IsAutoCloseConnection = true,
             //    InitKeyType = InitKeyType.Attribute
             //});
-            //db.CodeFirst.InitTables(typeof(SysCmsColumn), typeof(SysCmsInfo), typeof(SysCmsInfoComment), typeof(SysCmsInfoGood), typeof(SysDictionary), typeof(SysDictionaryItem), typeof(SysLinkItem), typeof(SysLinkType), typeof(SysLog), typeof(SysOperateRecord), typeof(SysPage), typeof(SysRole), typeof(SysRolePage), typeof(SysSetting), typeof(SysUser), typeof(SysUserRole)); 
+            //db.CodeFirst.InitTables(typeof(SysCmsColumn), typeof(SysCmsInfo), typeof(SysCmsInfoComment), typeof(SysCmsInfoGood), typeof(SysDictionary), typeof(SysDictionaryItem), typeof(SysLinkItem), typeof(SysLinkType), typeof(SysLog), typeof(SysOperateRecord), typeof(SysPage), typeof(SysRole), typeof(SysRolePage), typeof(SysSetting), typeof(SysUser), typeof(SysUserRole));
+            //db.CodeFirst.InitTables(typeof(SysLog));
             #endregion
 
             app.UseEndpoints(endpoints =>

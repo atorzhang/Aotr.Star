@@ -9,22 +9,9 @@ namespace Ator.Site.Rule.Helper
 {
     public static class AdminUrlHelper
     {
-        public static string ActionAdmin(this IUrlHelper urlHelper, string actionName, object routeValues = null)
+        public static string ActionAdmin(this IUrlHelper urlHelper, string actionName,string HomeName ="Home", string AreaName = "Admin")
         {
-            if (routeValues == null)
-            {
-                routeValues = new { Area = "Admin" };
-            }
-            return urlHelper.Action(actionName, routeValues);
-        }
-
-        public static string ActionAdmin(this IUrlHelper urlHelper, string actionName, string controllerName, object routeValues = null)
-        {
-            if (routeValues == null)
-            {
-                routeValues = new { Area = "Admin" };
-            }
-            return urlHelper.Action(actionName, controllerName, routeValues);
+            return $"/{AreaName}/{HomeName}/{actionName}";
         }
     }
 }

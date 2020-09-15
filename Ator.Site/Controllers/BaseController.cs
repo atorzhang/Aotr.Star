@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Ator.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using SqlSugar;
 
 namespace Ator.Site
@@ -21,7 +21,6 @@ namespace Ator.Site
         protected LayuiData apiResult;
         protected string resStr = string.Empty;
         protected bool result = false;
-        public static readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings() { DateFormatString = "yyyy-MM-dd HH:mm:ss" };//Json时间格式化
         #region 属性
 
         public string GuidKey
@@ -85,7 +84,7 @@ namespace Ator.Site
                 data = data,
                 code = code
             };
-            return Json(apiResult, jsonSerializerSettings);
+            return Json(apiResult);
         }
         public IActionResult Ok(string msg = "")
         {
@@ -113,7 +112,7 @@ namespace Ator.Site
                 msg = msg,
                 count = count,
             };
-            return Json(apiResult, jsonSerializerSettings);
+            return Json(apiResult);
         }
 
         public IActionResult Error(string msg = "", string code = "")

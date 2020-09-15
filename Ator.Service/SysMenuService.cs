@@ -28,7 +28,7 @@ namespace Ator.Service
         {
             var rootMenu = new MenusInfoResultDTO();
             //LogoInfo初始化
-            var imageModel = await DbContext.GetByIdAsync<SysLinkItem>("9f17e9bafa1948dda8b7ab1918d18b16");
+            var imageModel = await DbContext.GetByIdAsync<SysLinkItem>("LogoImgLink");
             rootMenu.LogoInfo.image = imageModel?.SysLinkImg;
             var siteNameModel = await DbContext.GetAsync<SysSetting>(o => o.SysSettingId == "SiteName");
             rootMenu.LogoInfo.title = siteNameModel?.SetValue;

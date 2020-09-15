@@ -42,7 +42,7 @@ namespace Ator.Model
     public class HomeInfo
     {
         public string title { get; set; } = "首页";
-        public string href { get; set; } = "page/welcome-1.html?t=1";
+        public string href { get; set; } = "/Admin/Home/Disk";
     }
 
     /// <summary>

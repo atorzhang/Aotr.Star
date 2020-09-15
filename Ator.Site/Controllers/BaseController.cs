@@ -76,7 +76,7 @@ namespace Ator.Site
         /// <param name="data"></param>
         /// <param name="msg"></param>
         /// <returns></returns>
-        public IActionResult Ok(object data, string msg = "", string code = "")
+        public IActionResult Ok(object data, string msg = "", int code = 0)
         {
             apiResult = new LayuiData()
             {
@@ -115,7 +115,7 @@ namespace Ator.Site
             return Json(apiResult);
         }
 
-        public IActionResult Error(string msg = "", string code = "")
+        public IActionResult Error(string msg = "", int code = 0)
         {
             apiResult = new LayuiData()
             {

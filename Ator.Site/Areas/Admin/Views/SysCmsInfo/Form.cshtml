@@ -1,0 +1,237 @@
+﻿@using Ator.Utility.Ext;
+@{
+    ViewData["Title"] = "Form";
+    Layout = "~/Areas/Admin/Views/Shared/_FormLayout.cshtml";
+    @model SysCmsInfo;
+}
+
+<form class="layui-form">
+    @if (string.IsNullOrEmpty(Model.SysCmsInfoId))
+    {
+        <input type="hidden" id="SysCmsInfoId" name="SysCmsInfoId"
+               autocomplete="off" class="layui-input" value="@Model.SysCmsInfoId">
+    }
+    else
+    {
+        <div class="layui-form-item">
+            <label for="SysCmsInfoId" class="layui-form-label">
+                <span class="we-red">*</span>信息Id
+            </label>
+            <div class="layui-input-block">
+                <input type="text" readonly id="SysCmsInfoId" name="SysCmsInfoId"
+                       autocomplete="off" class="layui-input" value="@Model.SysCmsInfoId">
+            </div>
+        </div>
+    }
+    <div class="layui-form-item">
+        <label for="SysCmsColumnId" class="layui-form-label">
+            栏目
+        </label>
+        <div class="layui-input-inline">
+            <select id="SysCmsColumnId" name="SysCmsColumnId" class="layui-select">
+                <option value="">无</option>
+                @foreach (var item in ViewBag.SysCmsColumnParentSelect)
+                {
+                    if (Model.SysCmsColumnId == item.Key || ViewBag.SysCmsColumnId == item.Key)
+                    {
+                        <option selected value="@item.Key">@item.Value</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Key">@item.Value</option>
+                    }
+                }
+            </select>
+        </div>
+        <label for="InfoPublishTime" class="layui-form-label">
+            <span class="we-red">*</span>发布时间
+        </label>
+        <div class="layui-input-inline">
+            <input type="text" id="InfoPublishTime" name="InfoPublishTime" required="" value="@Model.InfoPublishTime.ToDateTimeString()" lay-verify="required"
+                   autocomplete="off" class="layui-input">
+        </div>
+        <label for="InfoSource" class="layui-form-label">
+            来源
+        </label>
+        <div class="layui-input-inline">
+            <input type="text" id="InfoSource" name="InfoSource" required="" value="@Model.InfoSource"
+                   autocomplete="off" class="layui-input">
+        </div>
+        <label for="InfoAuthor" class="layui-form-label">
+            作者
+        </label>
+        <div class="layui-input-inline">
+            <input type="text" id="InfoAuthor" name="InfoAuthor" required="" value="@Model.InfoAuthor"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="InfoTitle" class="layui-form-label">
+            <span class="we-red">*</span>标题
+        </label>
+        <div class="layui-input-block">
+            <input type="text" placeholder="请填写标题，255字以内" id="InfoTitle" name="InfoTitle" required="" value="@Model.InfoTitle" lay-verify="required"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label for="InfoSecTitle" class="layui-form-label">
+            副标题
+        </label>
+        <div class="layui-input-block">
+            <input type="text" placeholder="副标题，255字以内" id="InfoSecTitle" name="InfoSecTitle" required="" value="@Model.InfoSecTitle"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="InfoImage" class="layui-form-label">
+            封面图
+        </label>
+        <div class="layui-input-block">
+            <div class="layui-upload">
+                <button type="button" class="layui-btn" id="uploadBtn">多图上传</button>
+                <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;height:170px">
+                    预览图：
+                    <div class="layui-upload-list" id="uploadImgs"></div>
+                </blockquote>
+                <p id="uploadTxt"></p>
+            </div>
+            <textarea id="InfoImage" name="InfoImage" required=""
+                      autocomplete="off" class="layui-textarea">@Model.InfoImage</textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label for="InfoAbstract" class="layui-form-label">
+            摘要
+        </label>
+        <div class="layui-input-block">
+            <textarea id="InfoAbstract" name="InfoAbstract" placeholder="摘要，255字以内" required=""
+                      autocomplete="off" class="layui-textarea">@Model.InfoAbstract</textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="Remark" class="layui-form-label">
+            标签
+        </label>
+        <div class="layui-input-block">
+            <input type="text" id="InfoLable" name="InfoLable" placeholder="标题前显示的标签，多个逗号,隔开" value="@Model.InfoLable"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-row">
+            <div class="layui-col-md6 layui-col-xs6">
+                <label for="InfoTop" class="layui-form-label">
+                    <span class="we-red">*</span>置顶级别
+                </label>
+                <div class="layui-input-block">
+                    <input type="number" placeholder="默认为0，比排序先触发，越大越靠前" id="InfoTop" name="InfoTop" required="" value="@Model.InfoTop" lay-verify="required"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-col-md6 layui-col-xs6">
+                <label for="InfoOrder" class="layui-form-label">
+                    <span class="we-red">*</span>排序
+                </label>
+                <div class="layui-input-block">
+                    <input type="number" placeholder="越大越考前，默认为0时候以发布时间排序" id="Sort" name="Sort" required="" value="@Model.Sort" lay-verify="required"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="InfoContent" class="layui-form-label">
+            内容
+        </label>
+        <div class="layui-input-block">
+            <textarea rows="8" class="form-control" name="InfoContent" id="InfoContent" style="width:100%;height:500px;visibility:hidden;">@Model.InfoContent</textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label for="Remark" class="layui-form-label">
+            备注
+        </label>
+        <div class="layui-input-block">
+            <input type="text" id="Remark" name="Remark" value="@Model.Remark"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span class="we-red">*</span>状态</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="Status" lay-skin="primary" title="启用" value="1" @Html.Raw(Model.Status == 1 ? "checked" : "")>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="L_repass" class="layui-form-label"></label>
+        <button class="layui-btn" lay-filter="add" lay-submit="">@Html.Raw(ViewBag.isCreate ? "添加" : "更新")</button>
+    </div>
+</form>
+@section Heads{
+    <link href="~/lib/kindeditor-4.1.11/themes/default/default.css" rel="stylesheet" />
+}
+@section Scripts{
+    <script src="~/lib/kindeditor-4.1.11/kindeditor-all.js"></script>
+    <script src="~/lib/kindeditor-4.1.11/lang/zh-CN.js"></script>
+    <script type="text/javascript">
+        _ContralPath = "/Admin/SysCmsInfo/";
+        layui.use(['form', 'layer', 'admin', 'jquery', 'laydate'], function () {
+            var form = layui.form,
+                admin = layui.admin,
+                layer = layui.layer,
+                laydate = layui.laydate,
+                $ = layui.jquery;
+            form.render();
+            //自定义验证规则
+            form.verify({
+
+            });
+
+            //监听提交
+            form.on('submit(add)', function (data) {
+                //发异步，把数据提交给后台
+                $.post(_ContralPath + _SavePath, data.field, function (res) {
+                    if (res.success) {
+                        layer.confirm('操作成功，是否关闭当前窗口?', function () {
+                            parent.reloadData();//刷新数据
+                            parent.colseForm(window.name);//关闭窗口
+                        });
+                    } else {
+                        layer.msg("操作失败," + res.msg);
+                    }
+                }, "json");
+
+                return false;
+            });
+
+            laydate.render({
+                elem: '#InfoPublishTime' //指定元素
+                , type: 'datetime'
+            });
+            //多图上传初始化
+            uploadImagesInit("uploadBtn", "uploadImgs", "InfoImage", "uploadTxt");
+        });
+        KindEditor.ready(function (K) {
+            window.NewsContent = K.create("#InfoContent", {
+                cssPath: '/lib/kindeditor-4.1.11/plugins/code/prettify.css',
+                uploadJson: '/Common/File/KindEditorImgUpload?saveDir=news_content',
+                allowFileManager: true,
+                afterCreate: function () {
+                    this.sync();
+                },
+                afterBlur: function () {
+                    this.sync();
+                }
+            });
+            $(".ke-container").addClass("form-control");
+        });
+    </script>
+}
+

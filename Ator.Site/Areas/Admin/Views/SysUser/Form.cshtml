@@ -1,0 +1,151 @@
+﻿
+@{
+    ViewData["Title"] = "Form";
+    Layout = "~/Areas/Admin/Views/Shared/_FormLayout.cshtml";
+    @model SysUser;
+}
+
+<form class="layui-form">
+    <input type="hidden" id="SysUserId" name="SysUserId"
+           autocomplete="off" class="layui-input" value="@Model.SysUserId">
+    <div class="layui-form-item">
+        <label for="username" class="layui-form-label">
+            <span class="we-red">*</span>登录名
+        </label>
+        <div class="layui-input-inline">
+            <input type="text" id="UserName" name="UserName" required="" value="@Model.UserName" lay-verify="required"
+                   autocomplete="off" class="layui-input">
+        </div>
+        <div class="layui-form-mid layui-word-aux">
+            <span class="we-red">*</span>将会成为您唯一的登入名
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="username" class="layui-form-label">
+            <span class="we-red">*</span>昵称
+        </label>
+        <div class="layui-input-inline">
+            <input type="text" id="NikeName" name="NikeName" value="@Model.NikeName"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="username" class="layui-form-label">
+            <span class="we-red">*</span>真实姓名
+        </label>
+        <div class="layui-input-inline">
+            <input type="text" id="TrueName" name="TrueName" value="@Model.TrueName"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="phone" class="layui-form-label">
+            <span class="we-red">*</span>手机
+        </label>
+        <div class="layui-input-inline">
+            <input type="text" id="Mobile" name="Mobile" value="@Model.Mobile" lay-verify="Mobile"
+                   autocomplete="off" class="layui-input">
+        </div>
+        @*<div class="layui-form-mid layui-word-aux">
+                <span class="we-red">*</span>
+            </div>*@
+    </div>
+    <div class="layui-form-item">
+        <label for="L_email" class="layui-form-label">
+            <span class="we-red">*</span>邮箱
+        </label>
+        <div class="layui-input-inline">
+            <input type="text" id="Email" name="Email" value="@Model.Email" lay-verify="Email"
+                   autocomplete="off" class="layui-input">
+        </div>
+        @*<div class="layui-form-mid layui-word-aux">
+                <span class="we-red">*</span>
+            </div>*@
+    </div>
+    @if (ViewBag.isCreate)
+    {
+        <div class="layui-form-item">
+            <label for="Password" class="layui-form-label">
+                <span class="we-red">*</span>密码
+            </label>
+            <div class="layui-input-inline">
+                <input type="password" id="Password" name="Password" required="" lay-verify="pass"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                <span class="we-red">*</span>6到16个字符(修改表单时无法修改密码)
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="L_repass" class="layui-form-label">
+                <span class="we-red">*</span>确认密码
+            </label>
+            <div class="layui-input-inline">
+                <input type="password" id="L_repass" name="repass" required="" lay-verify="repass"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    }
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span class="we-red">*</span>角色</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="like1[write]" lay-skin="primary" title="超级管理员" checked="">
+            <input type="checkbox" name="like1[read]" lay-skin="primary" title="编辑人员">
+            <input type="checkbox" name="like1[write]" lay-skin="primary" title="宣传人员" checked="">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span class="we-red">*</span>状态</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="Status" lay-skin="primary" title="启用" value="1" @Html.Raw(Model.Status == 1 ? "checked" : "")>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="L_repass" class="layui-form-label"></label>
+        <button class="layui-btn" lay-filter="add" lay-submit="">@Html.Raw(ViewBag.isCreate ? "添加" : "更新")</button>
+    </div>
+</form>
+@section Scripts{
+    <script type="text/javascript">
+        _ContralPath = "/Admin/SysUser/";
+        layui.use(['form', 'layer', 'admin','jquery'], function () {
+            var form = layui.form,
+                admin = layui.admin,
+                layer = layui.layer,
+                $  =layui.jquery;
+            form.render();
+            //自定义验证规则
+            form.verify({
+                username: function (value) {
+                    if (value.length < 5) {
+                        return '用户名至少得5个字符啊';
+                    }
+                }
+                , pass: [/(.+){6,60}$/, '密码必须6到60位']
+                , repass: function (value) {
+                    if ($('#L_repass').val() != $('#Password').val()) {
+                        return '两次密码不一致';
+                    }
+                }
+            });
+
+            //监听提交
+            form.on('submit(add)', function (data) {
+                //发异步，把数据提交给后台
+                $.post(_ContralPath + _SavePath, data.field, function (res) {
+                    if (res.success) {
+                        layer.confirm('操作成功，是否关闭当前窗口?', function () {
+                            parent.reloadData();//刷新数据
+                            parent.colseForm(window.name);//关闭窗口
+                        });
+                    } else {
+                        layer.msg("操作失败," + res.msg);
+                    }
+                }, "json");
+               
+                return false;
+            });
+        });
+    </script>
+}
+

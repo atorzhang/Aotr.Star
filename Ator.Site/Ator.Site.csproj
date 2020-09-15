@@ -7,6 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\Admin\Controllers\Sys\SysCmsInfoCommentController.cs" />
+    <Compile Remove="Areas\Admin\Controllers\Sys\SysCmsInfoController.cs" />
+    <Compile Remove="Areas\Admin\Controllers\Sys\SysDictionaryController.cs" />
+    <Compile Remove="Areas\Admin\Controllers\Sys\SysDictionaryItemController.cs" />
+    <Compile Remove="Areas\Admin\Controllers\Sys\SysLinkItemController.cs" />
+    <Compile Remove="Areas\Admin\Controllers\Sys\SysLinkTypeController.cs" />
+    <Compile Remove="Areas\Admin\Controllers\Sys\SysPageController.cs" />
+    <Compile Remove="Areas\Admin\Controllers\Sys\SysRoleController.cs" />
+    <Compile Remove="Areas\Admin\Controllers\Sys\SysRolePageController.cs" />
+    <Compile Remove="Areas\Admin\Controllers\Sys\SysSettingController.cs" />
+    <Compile Remove="Areas\Admin\Controllers\Sys\SysUserController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Areas\Admin\Views\KindEditorTest\Index.cshtml" />
     <None Include="wwwroot\js\lay-module\echarts\echarts.js" />
     <None Include="wwwroot\js\lay-module\echarts\echartsTheme.js" />
     <None Include="wwwroot\js\lay-module\iconPicker\iconPickerFa.js" />
@@ -56,6 +71,42 @@
     <None Include="wwwroot\lib\jq-module\paigusu.min.js" />
     <None Include="wwwroot\lib\jq-module\zyupload\zyupload-1.0.0.min.js" />
     <None Include="wwwroot\lib\jquery-3.4.1\jquery-3.4.1.min.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\asp.net\demo.aspx" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\asp.net\file_manager_json.ashx" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\asp.net\upload_json.ashx" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\kindeditor-all-min.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\kindeditor-all.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\lang\ar.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\lang\en.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\lang\ko.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\lang\ru.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\lang\zh-CN.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\lang\zh-TW.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\anchor\anchor.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\autoheight\autoheight.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\baidumap\baidumap.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\clearhtml\clearhtml.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\code\code.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\code\prettify.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\emoticons\emoticons.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\filemanager\filemanager.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\fixtoolbar\fixtoolbar.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\flash\flash.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\image\image.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\insertfile\insertfile.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\lineheight\lineheight.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\link\link.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\map\map.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\media\media.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\multiimage\images\swfupload.swf" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\multiimage\multiimage.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\pagebreak\pagebreak.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\plainpaste\plainpaste.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\preview\preview.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\quickformat\quickformat.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\table\table.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\template\template.js" />
+    <None Include="wwwroot\lib\kindeditor-4.1.11\plugins\wordpaste\wordpaste.js" />
     <None Include="wwwroot\lib\layui-v2.5.5\font\iconfont.svg" />
     <None Include="wwwroot\lib\layui-v2.5.5\font\iconfont.woff2" />
     <None Include="wwwroot\lib\layui-v2.5.5\layui.all.js" />
@@ -85,6 +136,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.1.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.1.1" />
+    <PackageReference Include="LinqKit" Version="1.1.17" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.8" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.0" />

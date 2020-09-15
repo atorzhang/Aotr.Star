@@ -1,0 +1,46 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"
+            asp-fallback-src="/lib/jquery/dist/jquery.min.js"
+            asp-fallback-test="window.jQuery">
+    </script>
+    <link href="~/lib/kindeditor-4.1.11/themes/default/default.css" rel="stylesheet" />
+    <script src="~/lib/kindeditor-4.1.11/kindeditor-all.js"></script>
+    <script src="~/lib/kindeditor-4.1.11/lang/zh-CN.js"></script>
+</head>
+<body>
+    <div class="form-horizontal col-sm-12">
+
+        <textarea rows="8" class="form-control" name="Content" id="Content" style="width:950px;height:500px;visibility:hidden;"></textarea>
+
+
+    </div>
+    <script>
+        KindEditor.ready(function (K) {
+            window.NewsContent = K.create("#Content", {
+                cssPath: '/lib/kindeditor-4.1.11/plugins/code/prettify.css',
+                uploadJson: '/Common/File/KindEditorImgUpload?saveDir=news_content',
+                //fileManagerJson: '/lib/kindeditor-4.1.11/asp.net/file_manager_json.ashx',
+                allowFileManager: true,
+                afterCreate: function () {
+                    this.sync();
+                },
+                afterBlur: function () {
+                    this.sync();
+                }
+            });
+            $(".ke-container").addClass("form-control");
+        });
+
+
+    </script>
+</body>
+</html>

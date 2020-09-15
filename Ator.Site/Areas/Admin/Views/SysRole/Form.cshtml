@@ -1,0 +1,85 @@
+﻿
+@{
+    ViewData["Title"] = "Form";
+    Layout = "~/Areas/Admin/Views/Shared/_FormLayout.cshtml";
+    @model SysRole;
+}
+
+<form class="layui-form">
+    <input type="hidden" id="SysRoleId" name="SysRoleId"
+           autocomplete="off" class="layui-input" value="@Model.SysRoleId">
+    <div class="layui-form-item">
+        <label for="RoleName" class="layui-form-label">
+            <span class="we-red">*</span>角色名称
+        </label>
+        <div class="layui-input-inline">
+            <input type="text" id="RoleName" name="RoleName" required="" value="@Model.RoleName" lay-verify="required"
+                   autocomplete="off" class="layui-input">
+        </div>
+        <div class="layui-form-mid layui-word-aux">
+            <span class="we-red">*</span>请填写角色名称
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="Sort" class="layui-form-label">
+            排序
+        </label>
+        <div class="layui-input-inline">
+            <input type="text" id="Sort" name="Sort" value="@Model.Sort"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="Remark" class="layui-form-label">
+            备注
+        </label>
+        <div class="layui-input-inline">
+            <input type="text" id="Remark" name="Remark" value="@Model.Remark"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span class="we-red">*</span>状态</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="Status" lay-skin="primary" title="启用" value="1" @Html.Raw(Model.Status == 1 ? "checked" : "")>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="L_repass" class="layui-form-label"></label>
+        <button class="layui-btn" lay-filter="add" lay-submit="">@Html.Raw(ViewBag.isCreate ? "添加" : "更新")</button>
+    </div>
+</form>
+@section Scripts{
+    <script type="text/javascript">
+        _ContralPath = "/Admin/SysRole/";
+        layui.use(['form', 'layer', 'admin','jquery'], function () {
+            var form = layui.form,
+                admin = layui.admin,
+                layer = layui.layer,
+                $  =layui.jquery;
+            form.render();
+            //自定义验证规则
+            form.verify({
+               
+            });
+
+            //监听提交
+            form.on('submit(add)', function (data) {
+                //发异步，把数据提交给后台
+                $.post(_ContralPath + _SavePath, data.field, function (res) {
+                    if (res.success) {
+                        layer.confirm('操作成功，是否关闭当前窗口?', function () {
+                            parent.reloadData();//刷新数据
+                            parent.colseForm(window.name);//关闭窗口
+                        });
+                    } else {
+                        layer.msg("操作失败," + res.msg);
+                    }
+                }, "json");
+               
+                return false;
+            });
+        });
+    </script>
+}
+

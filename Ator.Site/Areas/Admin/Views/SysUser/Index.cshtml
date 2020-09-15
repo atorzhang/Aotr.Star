@@ -1,0 +1,129 @@
+﻿
+@{
+    ViewData["Title"] = "用户管理";
+    Layout = "~/Areas/Admin/Views/Shared/_ListLayout.cshtml";
+    ViewData["SecondName"] = "用户管理";
+    ViewData["PageName"] = "用户列表";
+}
+
+<div class="weadmin-body">
+    @*查询筛选*@
+    <div class="layui-row">
+        <form class="layui-form layui-col-md12 we-search" id="aeSearch">
+            <div class="layui-inline">
+                <input class="layui-input" placeholder="开始日" name="start" id="start">
+            </div>
+            <div class="layui-inline">
+                <input class="layui-input" placeholder="截止日" name="end" id="end">
+            </div>
+            <div class="layui-inline">
+                <input type="text" name="UserName" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-inline">
+                <input type="text" id="userNum" placeholder="请输入新增用户数量" autocomplete="off" class="layui-input">
+            </div>
+            <button class="layui-btn" type="button" id="createUserBtn">测试添加用户</button>
+            <button class="layui-btn" type="button" lay-submit="" id="btnSreach" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+    </div>
+    <table class="layui-hide" id="listTable" lay-filter="test"></table>
+</div>
+@section Scripts{
+    @*头工具栏*@
+    <script type="text/html" id="listtoolbar">
+        <div class="layui-btn-container">
+            @*框架头工具固有事件*@
+            <button class="layui-btn layui-btn-sm" lay-event="addItem"><i class="layui-icon layui-icon-add-1"></i>添加</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="deleteItem"><i class="layui-icon layui-icon-delete"></i>删除</button>
+            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="checkPass"><i class="layui-icon layui-icon-ok"></i>通过</button>
+            <button class="layui-btn layui-btn-sm layui-btn-warm" lay-event="checkNoPass"><i class="layui-icon layui-icon-close"></i>不通过</button>
+            @*自定义头工具事件*@
+            @*<button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="toolBarTest"><i class="layui-icon layui-icon-set"></i>测试</button>*@
+        </div>
+    </script>
+    @*行工具*@
+    <script type="text/html" id="barDemo">
+        @*框架行工具固有事件*@
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        @*自定义行工具事件*@
+        @*<a class="layui-btn  layui-btn-xs" lay-event="detail">详情</a>*@
+    </script>
+    @*filter*@
+    <script type="text/html" id="switchTpl">
+        <!-- 状态显示 -->
+        <input type="checkbox" id="{{ d.SysUserId}}" name="Status" value="1" lay-skin="switch" lay-text="是|否"  lay-filter="statusFilter" {{ d.Status == 1 ? 'checked' : '' }}>
+    </script>
+    @*脚本*@
+    <script>
+        //初始化数据
+        intData = function () {
+            _idFieldName = "SysUserId";
+            _pageName = "用户";
+            _ContralPath = "/Admin/SysUser/";
+            _tableTitle = "用户数据表";
+            _cols = [[
+                { type: 'checkbox', fixed: 'left' }
+                , { field: 'SysUserId', title: 'ID', width: 0, hide: true, fixed: 'left', unresize: true }
+                , { field: 'UserName', title: '用户名', sort: true }
+                , { field: 'NikeName', title: '昵称', edit: true, sort: true }
+                , { field: 'TrueName', title: '真实姓名', edit: true, sort: true }
+                , { field: 'Mobile', title: '手机', sort: true }
+                , {
+                    field: 'Email', title: '邮箱', edit: true, templet: function (res) {
+                        return '<em>' + res.Email + '</em>';
+                    }
+                }
+                , { field: 'CreateTime', title: '创建时间', width: 160, sort: true }
+                , { field: 'Status', title: '状态', width: 80, sort: true, templet: '#switchTpl', unresize: true }
+                , { fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150 }
+            ]];
+            //重写方法，添加头工具栏事件detail
+            toolBarEvent = function (obj) {
+                switch (obj.event) {
+                    case "toolBarTest":
+                        layer.msg("toolBarTest");
+                        break;
+                }
+            }
+            //重写方法，添加行工具栏事件detail
+            toolEvent = function (obj) {
+                switch (obj.event) {
+                    case "detail":
+                        WeAdminShow('详情' + _pageName, _ContralPath + _AddPagePath + parameter + obj.data[_idFieldName], 850, 550);
+                        break;
+                }
+            }
+            //重新方法，启用修改表格时候填补必填字段
+            changeSaveJsonData = function (jsonObj) {
+                jsonObj.UserName = "UserName";//该表UserName不能为空
+            }
+        }
+        //页面一些逻辑可写在这
+        layui.use(['table', 'jquery', 'admin','laydate'], function () {
+            var table = layui.table,
+                form = layui.form,
+                $ = layui.jquery;
+            var laydate = layui.laydate;
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#start' //指定元素
+            });
+            laydate.render({
+                elem: '#end'//指定元素
+            });
+
+            $("#createUserBtn").click(function () {
+                $.post("CreateUserTest", { num: $("#userNum").val()}, function (res) {
+                    if (res.success) {
+                        layer.msg('添加成功');
+                        reloadData();
+                    } else {
+                        layer.msg('添加失败！' + res.msg);
+                    }
+                },"json");
+            });
+        });
+    </script>
+}
+

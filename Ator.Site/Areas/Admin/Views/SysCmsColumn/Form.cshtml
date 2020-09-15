@@ -1,0 +1,153 @@
+﻿
+@{
+    ViewData["Title"] = "Form";
+    Layout = "~/Areas/Admin/Views/Shared/_FormLayout.cshtml";
+    @model SysCmsColumn;
+}
+
+<form class="layui-form">
+    @if (string.IsNullOrEmpty(Model.SysCmsColumnId))
+    {
+        <input type="hidden" id="SysCmsColumnId" name="SysCmsColumnId"
+               autocomplete="off" class="layui-input" value="@Model.SysCmsColumnId">
+    }
+    else
+    {
+        <div class="layui-form-item">
+            <label for="SysCmsColumnId" class="layui-form-label">
+                <span class="we-red">*</span>栏目Id
+            </label>
+            <div class="layui-input-block">
+                <input type="text" readonly id="SysCmsColumnId" name="SysCmsColumnId"
+                       autocomplete="off" class="layui-input" value="@Model.SysCmsColumnId">
+            </div>
+        </div>
+    }
+
+    <div class="layui-form-item">
+        <label for="Sort" class="layui-form-label">
+            父级栏目
+        </label>
+        <div class="layui-input-block">
+            <select id="ColumnParent" name="ColumnParent" class="layui-input">
+                <option value="">无</option>
+                @foreach (var item in ViewBag.SysCmsColumnParentSelect)
+                {
+                    if (Model.ColumnParent == item.Key)
+                    {
+                        <option selected value="@item.Key">@item.Value</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Key">@item.Value</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="SysCmsColumnName" class="layui-form-label">
+            <span class="we-red">*</span>栏目名称
+        </label>
+        <div class="layui-input-block">
+            <input type="text" id="ColumnName" name="ColumnName" required="" value="@Model.ColumnName" lay-verify="required"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label for="SysCmsColumnImg" class="layui-form-label">
+            栏目Logo
+        </label>
+        <div class="layui-input-block">
+            <div class="layui-upload">
+                <button type="button" class="layui-btn" id="uploadBtn">上传图片</button>
+                <div class="layui-upload-list">
+                    <img class="layui-upload-img layui-input-inline" src="@Model.ColumnLogo" id="uploadImg">
+                    <p id="uploadTxt"></p>
+                </div>
+            </div>
+            <input type="text" id="ColumnLogo" name="ColumnLogo" value="@Model.ColumnLogo"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label for="SysCmsColumnNum" class="layui-form-label">
+            栏目说明
+        </label>
+        <div class="layui-input-block">
+            <textarea id="ColumnDescript" name="ColumnDescript"
+                      autocomplete="off" class="layui-textarea">@Model.ColumnDescript</textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label for="Sort" class="layui-form-label">
+            排序
+        </label>
+        <div class="layui-input-block">
+            <input type="text" id="Sort" name="Sort" value="@Model.Sort"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="Remark" class="layui-form-label">
+            备注
+        </label>
+        <div class="layui-input-block">
+            <input type="text" id="Remark" name="Remark" value="@Model.Remark"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span class="we-red">*</span>状态</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="Status" lay-skin="primary" title="启用" value="1" @Html.Raw(Model.Status == 1 ? "checked" : "")>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="L_repass" class="layui-form-label"></label>
+        <button class="layui-btn" lay-filter="add" lay-submit="">@Html.Raw(ViewBag.isCreate ? "添加" : "更新")</button>
+    </div>
+</form>
+@section Scripts{
+    <script type="text/javascript">
+        _ContralPath = "/Admin/SysCmsColumn/";
+        layui.use(['form', 'layer', 'admin', 'jquery','upload'], function () {
+            var form = layui.form,
+                admin = layui.admin,
+                layer = layui.layer,
+                upload = layui.upload,
+                $  =layui.jquery;
+            form.render();
+            //自定义验证规则
+            form.verify({
+               
+            });
+
+            //监听提交
+            form.on('submit(add)', function (data) {
+                //发异步，把数据提交给后台
+                $.post(_ContralPath + _SavePath, data.field, function (res) {
+                    if (res.success) {
+                        layer.confirm('操作成功，是否关闭当前窗口?', function () {
+                            parent.reloadData();//刷新数据
+                            parent.colseForm(window.name);//关闭窗口
+                        });
+                    } else {
+                        layer.msg("操作失败," + res.msg);
+                    }
+                }, "json");
+               
+                return false;
+            });
+            //上传初始化
+            
+            uploadImageInit("uploadBtn", "uploadImg", "ColumnLogo","uploadTxt");
+            
+        });
+    </script>
+}
+

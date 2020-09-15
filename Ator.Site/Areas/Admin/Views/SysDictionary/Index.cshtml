@@ -1,0 +1,97 @@
+﻿
+@{
+    ViewData["Title"] = "字典管理";
+    Layout = "~/Areas/Admin/Views/Shared/_ListLayout.cshtml";
+    ViewData["SecondName"] = "系统管理";
+    ViewData["PageName"] = "字典管理";
+}
+
+<div class="weadmin-body">
+    @*查询筛选*@
+    <div class="layui-row">
+        <form class="layui-form layui-col-md12 we-search" id="aeSearch">
+            <div class="layui-inline">
+                <input type="text" name="SysDictionaryName" placeholder="请输入字典名" autocomplete="off" class="layui-input">
+            </div>
+            <button class="layui-btn" type="button" lay-submit="" id="btnSreach" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+    </div>
+    <table class="layui-hide" id="listTable" lay-filter="test"></table>
+</div>
+@section Scripts{
+    @*头工具栏*@
+    <script type="text/html" id="listtoolbar">
+        <div class="layui-btn-container">
+            @*框架头工具固有事件*@
+            <button class="layui-btn layui-btn-sm" lay-event="addItem"><i class="layui-icon layui-icon-add-1"></i>添加</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="deleteItem"><i class="layui-icon layui-icon-delete"></i>删除</button>
+            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="checkPass"><i class="layui-icon layui-icon-ok"></i>通过</button>
+            <button class="layui-btn layui-btn-sm layui-btn-warm" lay-event="checkNoPass"><i class="layui-icon layui-icon-close"></i>不通过</button>
+            @*自定义头工具事件*@
+            @*<button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="toolBarTest"><i class="layui-icon layui-icon-set"></i>测试</button>*@
+        </div>
+    </script>
+    @*行工具*@
+    <script type="text/html" id="barDemo">
+        @*框架行工具固有事件*@
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        @*自定义行工具事件*@
+        <a class="layui-btn  layui-btn-xs" lay-event="detail">字典项管理</a>
+    </script>
+    @*filter*@
+    <script type="text/html" id="switchTpl">
+        <!-- 状态显示 -->
+        <input type="checkbox" id="{{ d.SysDictionaryId}}" name="Status" value="1" lay-skin="switch" lay-text="是|否"  lay-filter="statusFilter" {{ d.Status == 1 ? 'checked' : '' }}>
+    </script>
+    @*脚本*@
+    <script>
+        //初始化数据
+        intData = function () {
+            _idFieldName = "SysDictionaryId";
+            _pageName = "字典";
+            _ContralPath = "/Admin/SysDictionary/";
+            _tableTitle = "字典数据表";
+            _cols = [[
+                { type: 'checkbox', fixed: 'left' }
+                , { field: 'SysDictionaryId', title: '字典编码'}
+                , { field: 'SysDictionaryName', title: '字典名称', edit: true,sort: true }
+                , { field: 'SysDictionaryGroup', title: '字典分组', edit: true, sort: true }
+
+                , { field: 'Sort', title: '排序', edit: true, sort: true }
+                , { field: 'Remark', title: '备注', edit: true, sort: true }
+                , { field: 'CreateTime', title: '创建时间', width: 120, sort: true }
+                , { field: 'Status', title: '状态', width: 80, sort: true, templet: '#switchTpl', unresize: true }
+                , { fixed: 'right', title: '操作', toolbar: '#barDemo', width: 200 }
+            ]];
+            //重写方法，添加头工具栏事件
+            toolBarEvent = function (obj) {
+                switch (obj.event) {
+                    case "toolBarTest":
+                        layer.msg("toolBarTest");
+                        break;
+                }
+            }
+            //重写方法，添加行工具栏事件detail
+            toolEvent = function (obj) {
+                switch (obj.event) {
+                    case "detail":
+                        WeAdminShow(_pageName + '字典项管理', '/Admin/SysDictionaryItem/Index?SysDictionaryId=' + obj.data[_idFieldName], 850, 550);
+                        break;
+                }
+            }
+            //重写方法，启用修改表格时候填补必填字段
+            changeSaveJsonData = function (jsonObj) {
+                //jsonObj.UserName = "UserName";//该表UserName不能为空
+            }
+        }
+        //页面一些逻辑可写在这
+        layui.use(['table', 'jquery', 'admin','laydate'], function () {
+            var table = layui.table,
+                form = layui.form,
+                $ = layui.jquery;
+            var laydate = layui.laydate;
+        });
+    </script>
+}
+

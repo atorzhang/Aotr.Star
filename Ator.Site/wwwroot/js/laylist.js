@@ -4,6 +4,7 @@ var _dataUrl = '';//表格数据来源地址 '/TempletPdf/GetPage'
 var _cols = [[]];//表格显示的属性
 var _formUrl = '';//添加或编辑按钮跳转页面 /TempletPdf/Form
 var _deleteUrl = ''//删除地址 /TempletPdf/Delete
+var _passUrl = ''//通过地址 /TempletPdf/Delete
 var _idName = 'Id';//主键名称
 
 //具有默认值属性
@@ -16,7 +17,7 @@ var _toolbar = 'currentToolbar';
 var _limits = [10, 15, 20, 50, 100, 500, 1000];
 var _limit = 15;
 var _searchFiled = {};//搜索保存的参数
-var _autoSort = false ;
+var _autoSort = false;
 
 //监听事件
 var _searchBefore = function (data) { }//搜索前事件
@@ -26,15 +27,17 @@ var _titleBarClick = function (obj, table, layer) { }//工具栏按钮点击后�
 var _tableToolBefore = function (obj) { }//表格工具栏点击前监听
 var _tableToolClick = function (obj, table, layer) { }//表格工具栏按钮点击事件
 var _tableCheckbox = function (obj) { }//监听表格复选框事件
-var _init = function (form, table,layer) { };//初始化前事件
+var _init = function (form, table) { };//初始化前事件
+var reSearch = function () { //重新加载数据
+    $("#searchBtn").click();
+}
 //初始化
 $(function () {
-    layui.use(['form', 'table', 'layer'], function () {
+    layui.use(['form', 'table'], function () {
         var $ = layui.jquery,
             form = layui.form,
-            table = layui.table,
-            layer = layui.layer;
-        _init(form, table, layer);
+            table = layui.table;
+        _init(form, table);
         //表格初始化
         table.render({
             method: _method,
@@ -51,6 +54,7 @@ $(function () {
             limit: _limit,
             page: true,
             autoSort: _autoSort,
+            skin: 'line',
             where: _searchFiled
         });
 
@@ -95,11 +99,15 @@ $(function () {
                 for (var i = 0; i < data.length; i++) {
                     ids.push(data[i][_idName]);
                 }
+                if (ids.length == 0) {
+                    layer.msg('请选择要删除的行数据！', { icon: 2 });
+                    return;
+                }
                 layer.confirm('真的删除选中行吗？', function (index) {
                     $.post(_deleteUrl, { id: ids.join() }, function (res) {
                         if (res.code == 0) {
                             layer.msg('删除成功', { icon: 1 });
-                            obj.del();
+                            reSearch();
                         }
                         else {
                             layer.msg('删除失败,' + res.msg, { icon: 2 });
@@ -110,7 +118,59 @@ $(function () {
                         layer.close(index);
                     });
                 });
-            } else {
+            } else if (obj.event === 'checkPass') {  // 监听通过操作
+                var checkStatus = table.checkStatus('currentTableId')
+                    , data = checkStatus.data;
+                var ids = [];
+                for (var i = 0; i < data.length; i++) {
+                    ids.push(data[i][_idName]);
+                }
+                if (ids.length == 0) {
+                    layer.msg('请选择要操作的行数据！', { icon: 2 });
+                    return;
+                }
+                var loadIndex = layer.load(2);
+                $.post(_passUrl, { ids: ids.join(), status : 1 }, function (res) {
+                    if (res.code == 0) {
+                        layer.msg('操作成功', { icon: 1 });
+                        reSearch();
+                    }
+                    else {
+                        layer.msg('操作失败,' + res.msg, { icon: 2 });
+                    }
+                    layer.close(loadIndex);
+                }, 'json').error(function (xhr, errorText, errorType) {
+                    layer.msg('操作失败', { icon: 2 });
+                    layer.close(loadIndex);
+                });
+            }
+            else if (obj.event === 'checkNoPass') {  // 监听通过操作
+                var checkStatus = table.checkStatus('currentTableId')
+                    , data = checkStatus.data;
+                var ids = [];
+                for (var i = 0; i < data.length; i++) {
+                    ids.push(data[i][_idName]);
+                }
+                if (ids.length == 0) {
+                    layer.msg('请选择要操作的行数据！', { icon: 2 });
+                    return;
+                }
+                var loadIndex = layer.load(2);
+                $.post(_passUrl, { ids: ids.join(), status: 2 }, function (res) {
+                    if (res.code == 0) {
+                        layer.msg('操作成功', { icon: 1 });
+                        reSearch();
+                    }
+                    else {
+                        layer.msg('操作失败,' + res.msg, { icon: 2 });
+                    }
+                    layer.close(loadIndex);
+                }, 'json').error(function (xhr, errorText, errorType) {
+                    layer.msg('操作失败', { icon: 2 });
+                    layer.close(loadIndex);
+                });
+            }
+            else {
                 //自定义toolbar监听事件
                 _titleBarClick(obj, table, layer);
             }
@@ -133,7 +193,11 @@ $(function () {
 
         //表格内工具栏监听事件
         table.on('tool(currentTableFilter)', function (obj) {
-            _tableToolBefore(obj);
+            var _checkToolMsg = _tableToolBefore(obj);
+            if (_checkToolMsg != undefined && _checkToolMsg.length > 0) {
+                layer.msg(_checkToolMsg, { icon: 7 });
+                return false;
+            }
             var data = obj.data;
             if (obj.event === 'edit') {
                 var index = layer.open({
@@ -157,11 +221,11 @@ $(function () {
                             obj.del();
                         }
                         else {
-                            layer.msg('删除失败', { icon: 2 });
+                            layer.msg('删除失败!' + res.msg, { icon: 2 });
                         }
                         layer.close(index);
                     }, 'json').error(function (xhr, errorText, errorType) {
-                        layer.msg('删除失败', { icon: 2 });
+                        layer.msg('网络错误，删除失败', { icon: 2 });
                         layer.close(index);
                     });
                 });
@@ -170,4 +234,4 @@ $(function () {
             }
         });
     });
-});
+})

@@ -1,0 +1,141 @@
+﻿
+@{
+    ViewData["Title"] = "评论管理";
+    Layout = "~/Areas/Admin/Views/Shared/_ListLayout.cshtml";
+    ViewData["SecondName"] = "信息管理";
+    ViewData["PageName"] = "评论管理";
+}
+
+<div class="weadmin-body">
+    @*查询筛选*@
+    <div class="layui-row">
+        <form class="layui-form layui-col-md12 we-search" id="aeSearch">
+
+            <div class="layui-inline"> 栏目:</div>
+            <div class="layui-inline">
+                <select name="SysCmsColumnId" class="layui-select">
+                    <option value="">全部</option>
+                    @foreach (var item in ViewBag.SysCmsColumnSelect)
+                    {
+                        if (ViewBag.SysCmsColumnId == item.Key)
+                        {
+                            <option selected value="@item.Key">@item.Value</option>
+                        }
+                        else
+                        {
+                            <option value="@item.Key">@item.Value</option>
+                        }
+                    }
+
+                </select>
+            </div>
+            <div class="layui-inline"> 信息标题:</div>
+            <div class="layui-inline">
+                <select name="SysCmsInfoId" class="layui-select">
+                    <option value="">全部</option>
+                    @foreach (var item in ViewBag.SysCmsInfoSelect)
+                    {
+                        if (ViewBag.SysCmsInfoId == item.Key)
+                        {
+                            <option selected value="@item.Key">@item.Value</option>
+                        }
+                        else
+                        {
+                            <option value="@item.Key">@item.Value</option>
+                        }
+                    }
+
+                </select>
+            </div>
+            <div class="layui-inline"> 评论用户:</div>
+            <div class="layui-inline">
+                <input type="text" name="SysUserId" placeholder="请输入评论用户编码" autocomplete="off" class="layui-input">
+            </div>
+            <button class="layui-btn" type="button" lay-submit="" id="btnSreach" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+    </div>
+    <table class="layui-hide" id="listTable" lay-filter="test"></table>
+</div>
+@section Scripts{
+    @*头工具栏*@
+    <script type="text/html" id="listtoolbar">
+        <div class="layui-btn-container">
+            @*框架头工具固有事件*@
+            @*<button class="layui-btn layui-btn-sm" lay-event="addItem"><i class="layui-icon layui-icon-add-1"></i>添加</button>*@
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="deleteItem"><i class="layui-icon layui-icon-delete"></i>删除</button>
+            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="checkPass"><i class="layui-icon layui-icon-ok"></i>通过</button>
+            <button class="layui-btn layui-btn-sm layui-btn-warm" lay-event="checkNoPass"><i class="layui-icon layui-icon-close"></i>不通过</button>
+            @*自定义头工具事件*@
+            @*<button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="toolBarTest"><i class="layui-icon layui-icon-set"></i>测试</button>*@
+        </div>
+    </script>
+    @*行工具*@
+    <script type="text/html" id="barDemo">
+        @*框架行工具固有事件*@
+   
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        @*自定义行工具事件*@
+        @*<a class="layui-btn  layui-btn-xs" lay-event="detail">详情</a>*@
+    </script>
+    @*filter*@
+    <script type="text/html" id="switchTpl">
+        <!-- 状态显示 -->
+        <input type="checkbox" id="{{ d.SysCmsInfoCommentId}}" name="Status" value="1" lay-skin="switch" lay-text="是|否" lay-filter="statusFilter" {{ d.Status == 1 ? 'checked' : '' }}>
+    </script>
+    @*脚本*@
+    <script>
+        //初始化数据
+        intData = function (layui) {
+            _idFieldName = "SysCmsInfoCommentId";
+            _pageName = "评论";
+            _ContralPath = "/Admin/SysCmsInfoComment/";
+            _tableTitle = "评论数据表";
+            //_isFormFull = true;//全屏显示Form
+            _cols = [[
+                { type: 'checkbox', fixed: 'left' }
+                , { field: 'SysCmsInfoCommentId', title: 'ID', width: 0, hide: true, fixed: 'left', unresize: true }
+                , { field: 'SysCmsInfoId', title: '评论信息标题', edit: true, sort: true }
+                , { field: 'SysCmsColumnId', title: '评论信息栏目', edit: true, sort: true }
+                , { field: 'Comment', title: '评论内容', edit: true, sort: true }
+                , { field: 'SysUserId', title: '用户', edit: true, sort: true }
+                , { field: 'ToUserId', title: 'To用户', edit: true, sort: true }
+                , { field: 'UserLable', title: '用户标签', edit: true, sort: true }
+                , { field: 'Ip', title: 'Ip', edit: true, sort: true }
+                , { field: 'Address', title: '用户位置', edit: true, sort: true }
+                , { field: 'CommentTime', title: '评论时间', width: 120, sort: true }
+                , { field: 'Status', title: '状态', width: 80, sort: true, templet: '#switchTpl', unresize: true }
+                , { fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150 }
+            ]];
+            //重写方法，添加头工具栏事件
+            toolBarEvent = function (obj) {
+                switch (obj.event) {
+                    case "toolBarTest":
+                        layer.msg("toolBarTest");
+                        break;
+                }
+            }
+            //重写方法，添加行工具栏事件detail
+            toolEvent = function (obj) {
+                switch (obj.event) {
+                    //case "detail":
+                    //    var index_ = WeAdminShow('详情' + _pageName, _ContralPath + "Detail" + parameter + obj.data[_idFieldName], 850, 550);
+                    //    layui.layer.full(index_);
+                    //    break;
+                }
+            }
+            //重写方法，启用修改表格时候填补必填字段
+            changeSaveJsonData = function (jsonObj) {
+                //jsonObj.UserName = "UserName";//该表UserName不能为空
+            }
+        }
+        //页面一些逻辑可写在这
+        layui.use(['table', 'jquery', 'admin', 'laydate'], function () {
+            var table = layui.table,
+                form = layui.form,
+                $ = layui.jquery;
+            var laydate = layui.laydate;
+        });
+
+    </script>
+}
+

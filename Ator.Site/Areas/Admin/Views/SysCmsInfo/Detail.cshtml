@@ -1,0 +1,56 @@
+﻿@using Ator.Utility.Ext;
+@{
+    ViewData["Title"] = "Form";
+    Layout = "~/Areas/Admin/Views/Shared/_FormLayout.cshtml";
+    @model SysCmsInfo;
+}
+<style>
+    .article_is_yc {
+        font-size: 20px;
+        display: inline-block;
+        line-height: 32px;
+        background: #FF0033;
+        border-radius: 2px;
+        color: #fff;
+        padding: 0px 5px;
+        position: inherit;
+    }
+</style>
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-md12 layui-col-xs12 " style="text-align:center">
+            <h1 style="font-weight:bold"> <span class="article_is_yc">[@Model.InfoLable]</span>&nbsp;@Model.InfoTitle</h1>
+        </div>
+    </div>
+    
+    <br />
+    <div class="layui-row">
+        <div class="layui-col-md3 layui-col-xs3">
+            来源:@Model.InfoSource
+        </div>
+        <div class="layui-col-md3 layui-col-xs3">
+            作者:@Model.InfoAuthor
+        </div>
+        <div class="layui-col-md3 layui-col-xs3">
+            发布时间:@Model.InfoPublishTime.ToDateTimeString()
+        </div>
+        <div class="layui-col-md3 layui-col-xs3">
+            点击:@Model.InfoClicks
+        </div>
+    </div>
+    <br />
+    <div class="layui-row">
+        <div class="layui-col-md12 layui-col-xs12">
+            <h3><span style="font-weight:bold">摘要:</span><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            @Html.Raw(Model.InfoAbstract)</h3>
+        </div>
+    </div>
+    <br />
+    <hr style=" height:2px;border:none;border-top:2px dotted #185598;" />
+    <br />
+    <div class="layui-row">
+        <div class="layui-col-md12 layui-col-xs12">
+            @Html.Raw(Model.InfoContent)
+        </div>
+    </div>
+</div>

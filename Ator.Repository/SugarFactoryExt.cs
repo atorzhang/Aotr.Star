@@ -180,6 +180,21 @@ namespace Ator.Repository
         }
 
         /// <summary>
+        /// [异步]根据条件获取实体列表
+        /// </summary>
+        /// <typeparam name="TSource">数据源类型</typeparam>
+        /// <param name="db"></param>
+        /// <param name="whereExp">条件表达式</param>
+        /// <returns></returns>
+        public static async Task<List<TSource>> GetListAsync<TSource>(this SqlSugarClient db, Expression<Func<TSource, bool>> whereExp, string orderBy = "") where TSource : EntityDb, new()
+        {
+            return await Task.Run(() =>
+            {
+                return db.Queryable<TSource>().Where(whereExp).OrderByIF(!string.IsNullOrEmpty(orderBy), orderBy).ToList();
+            });
+        }
+
+        /// <summary>
         /// 根据条件获取实体列表
         /// </summary>
         /// <typeparam name="TSource">数据源类型</typeparam>
@@ -193,6 +208,22 @@ namespace Ator.Repository
             return result.Map<List<TSource>, List<TMap>>();
         }
 
+        /// <summary>
+        /// 【异步】根据条件获取实体列表
+        /// </summary>
+        /// <typeparam name="TSource">数据源类型</typeparam>
+        /// <typeparam name="TMap">数据源映射类型</typeparam>
+        /// <param name="db"></param>
+        /// <param name="whereExp">条件表达式</param>
+        /// <returns></returns>
+        public static async Task<List<TMap>> GetListAsync<TSource, TMap>(this SqlSugarClient db, Expression<Func<TSource, bool>> whereExp, string orderBy = "") where TSource : EntityDb, new()
+        {
+            return await Task.Run(() =>
+            {
+                var result = db.Queryable<TSource>().Where(whereExp).OrderByIF(!string.IsNullOrEmpty(orderBy), orderBy).ToList();
+                return result.Map<List<TSource>, List<TMap>>();
+            });
+        }
         #endregion
 
         #region 根据Sugar条件获取列表
@@ -256,6 +287,21 @@ namespace Ator.Repository
         /// 新增实体对象
         /// </summary>
         /// <typeparam name="TSource"></typeparam>
+        /// <param name="db"></param>
+        /// <param name="insertObj"></param>
+        /// <returns></returns>
+        public static async Task<bool> InsertAsync<TSource>(this SqlSugarClient db, TSource insertObj) where TSource : EntityDb, new()
+        {
+            return await Task.Run(() =>
+            {
+                return db.Insertable(insertObj).ExecuteCommand() > 0;
+            });
+        }
+
+        /// <summary>
+        /// 新增实体对象
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
         /// <typeparam name="TMap"></typeparam>
         /// <param name="db"></param>
         /// <param name="insertDto"></param>
@@ -306,6 +352,34 @@ namespace Ator.Repository
         public static bool Update<TSource>(this SqlSugarClient db, TSource updateObj) where TSource : EntityDb, new()
         {
             return db.Updateable(updateObj).ExecuteCommand() > 0;
+        }
+        /// <summary>
+        /// [异步]更新单个实体对象
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="db"></param>
+        /// <param name="updateObj"></param>
+        /// <returns></returns>
+        public static async Task<bool> UpdateAsync<TSource>(this SqlSugarClient db, TSource updateObj) where TSource : EntityDb, new()
+        {
+            return await Task.Run(() =>
+            {
+                return db.Updateable(updateObj).ExecuteCommand() > 0;
+            });
+        }
+        /// <summary>
+        /// [异步]更新单个实体对象,字段更新
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="db"></param>
+        /// <param name="updateObj"></param>
+        /// <returns></returns>
+        public static async Task<bool> UpdateAsync<TSource>(this SqlSugarClient db, TSource updateObj,List<string> lstColum) where TSource : EntityDb, new()
+        {
+            return await Task.Run(() =>
+            {
+                return db.Updateable(updateObj).SetColumns(o => lstColum.Contains(o.ToString())).ExecuteCommand() > 0;
+            });
         }
         #endregion
 

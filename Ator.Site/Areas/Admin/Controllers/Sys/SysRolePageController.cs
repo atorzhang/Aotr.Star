@@ -12,7 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Ator.Entity.Sys;
+using Ator.DbEntity.Factory;
+using Ator.DbEntity.Sys;
 using Ator.IService;
 using Ator.Model.ViewModel.Sys;
 using Ator.Repository;
@@ -25,16 +26,17 @@ using Microsoft.Extensions.Logging;
 namespace Ator.Site.Areas.Admin.Controllers.Sys
 {
     [Area("Admin")]
+    [Route("Admin/[controller]/[action]")]
     public class SysRolePageController : BaseController
     {
         #region Init
         private string _entityName = "角色权限";
-        private UnitOfWork _unitOfWork;
+        
         private readonly ILogger _logger;
         private IMapper _mapper;
-        public SysRolePageController(UnitOfWork unitOfWork, ILogger<SysRolePageController> logger, IMapper mapper)
+        public SysRolePageController(DbFactory factory, ILogger<SysRolePageController> logger, IMapper mapper)
         {
-            _unitOfWork = unitOfWork;
+             DbContext = factory.GetDbContext();
             _logger = logger;
             _mapper = mapper;
         }
@@ -66,9 +68,9 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
             #endregion
 
             //查询所有页面数据
-            var searchData = await _unitOfWork.SysPageRepository.GetListAsync(predicate, "");
+            var searchData = await DbContext.GetListAsync<SysPage>(predicate.And(o => true), "");
             //查询该角色对应所有页面信息
-            var rolePageDatas = await _unitOfWork.SysRolePageRepository.GetListAsync(o => o.SysRoleId == role, "Sort");
+            var rolePageDatas = await DbContext.GetListAsync<SysRolePage>(o => o.SysRoleId == role, "Sort");
 
             foreach (var item in searchData)
             {
@@ -76,7 +78,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
             }
             //获得返回集合Dto
             
-            return SuccessRes(searchData);
+            return Ok(searchData);
         }
 
         /// <summary>
@@ -91,7 +93,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
 
             //添加该规则保存的页面
 
-            return result ? SuccessRes() : ErrRes();
+            return result ? Ok() : Error();
         }
         #endregion
     }

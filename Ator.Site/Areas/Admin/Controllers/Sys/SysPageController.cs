@@ -12,7 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Ator.Entity.Sys;
+using Ator.DbEntity.Factory;
+using Ator.DbEntity.Sys;
 using Ator.IService;
 using Ator.Model.ViewModel.Sys;
 using Ator.Repository;
@@ -25,17 +26,18 @@ using Microsoft.Extensions.Logging;
 namespace Ator.Site.Areas.Admin.Controllers.Sys
 {
     [Area("Admin")]
+    [Route("Admin/[controller]/[action]")]
     public class SysPageController : BaseController
     {
         #region Init
         private string _entityName = "页面";
-        private UnitOfWork _unitOfWork;
+        
         private readonly ILogger _logger;
         private IMapper _mapper;
         private ISysPageService _sysPageService;
-        public SysPageController(UnitOfWork unitOfWork, ILogger<SysPageController> logger, IMapper mapper, ISysPageService sysPageService)
+        public SysPageController(DbFactory factory, ILogger<SysPageController> logger, IMapper mapper, ISysPageService sysPageService)
         {
-            _unitOfWork = unitOfWork;
+             DbContext = factory.GetDbContext();
             _logger = logger;
             _mapper = mapper;
             _sysPageService = sysPageService;
@@ -54,7 +56,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         {
             ViewBag.id = id;
             ViewBag.isCreate = string.IsNullOrEmpty(id);
-            var model = _unitOfWork.SysPageRepository.Get(id);
+            var model = DbContext.GetById<SysPage>(id);
             ViewBag.SysPageParentSelect = _sysPageService.GetPageList();
             return View(model ?? new SysPage() { Status = 1 });
         }
@@ -75,8 +77,8 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         [HttpGet]
         public async Task<IActionResult> GetData(string id)
         {
-            var data = await _unitOfWork.SysPageRepository.GetAsync(id);
-            return SuccessRes(data);
+            var data = await DbContext.GetByIdAsync<SysPage>(id,true);
+            return Ok(data);
         }
 
         /// <summary>
@@ -94,18 +96,21 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
             {
                 predicate = predicate.And(i => i.SysPageName.Contains(search.SysPageName));
             }
-
+            if (!string.IsNullOrEmpty(search.SysPageNum))
+            {
+                predicate = predicate.And(i => i.SysPageNum.Contains(search.SysPageNum));
+            }
             #endregion
 
             //查询数据
-            var searchData = await _unitOfWork.SysPageRepository.GetPageAsync(predicate,nameof(SysPage.SysPageNum)+"," + search.Ordering, search.Page, search.Limit);
+            var searchData = await DbContext.GetPageListAsync<SysPage>(predicate.And(o => true), nameof(SysPage.SysPageNum)+"," + search.Ordering, search.Page, search.Limit);
             foreach (var item in searchData.Rows)
             {
-                item.SysPageParent = (await _unitOfWork.SysPageRepository.GetAsync(item.SysPageParent))?.SysPageName;
+                item.SysPageParent = (await DbContext.GetByIdAsync<SysPage>(item.SysPageParent))?.SysPageName;
             }
             //获得返回集合Dto
             search.ReturnData = searchData.Rows.Select(o => _mapper.Map<SysPageSearchDto>(o)).ToList();
-            return SuccessRes(search.ReturnData, searchData.Totals);
+            return Ok(search.ReturnData, searchData.Totals);
         }
 
         /// <summary>
@@ -119,16 +124,16 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
             var errMsg = GetModelErrMsg();
             if (!string.IsNullOrEmpty(errMsg))
             {
-                return ErrRes(errMsg);
+                return Error(errMsg);
             }
             model.Status = model.Status ?? 2;
             if (string.IsNullOrEmpty(model.SysPageId))
             {
                 model.SysPageId = GuidKey;
                 model.CreateTime = DateTime.Now;
-                model.CreateUser = Id;
+                model.CreateUser = CurrentLoginUser.Id;
 
-                result = await _unitOfWork.SysPageRepository.InsertAsync(model);
+                result = await DbContext.InsertAsync<SysPage>(model);
                 if (result)
                 {
                     _logger.LogInformation($"添加{_entityName}{model.SysPageName}");
@@ -139,7 +144,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
                 //定义可以修改的列
                 var lstColumn = new List<string>()
                 {
-                    nameof(SysPage.Remark), nameof(SysPage.Sort), nameof(SysPage.Status), nameof(SysPage.SysPageImg), nameof(SysPage.SysPageName), nameof(SysPage.SysPageNum),nameof(SysPage.SysPageParent),nameof(SysPage.SysPageUrl)
+                    nameof(SysPage.SysPageId),nameof(SysPage.Remark), nameof(SysPage.Sort), nameof(SysPage.Status), nameof(SysPage.SysPageImg), nameof(SysPage.SysPageName), nameof(SysPage.SysPageNum),nameof(SysPage.SysPageParent),nameof(SysPage.SysPageUrl)
                 };
                 if (!string.IsNullOrEmpty(columns))//固定过滤只修改某字段
                 {
@@ -150,15 +155,16 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
                     else
                     {
                         lstColumn = lstColumn.Where(o => columns.Split(',').Contains(o)).ToList();
+                        lstColumn.Add(nameof(SysPage.SysPageId));
                     }
                 }
-                result = await _unitOfWork.SysPageRepository.UpdateAsync(model, true, lstColumn);
+                result = await DbContext.UpdateAsync<SysPage>(model, lstColumn);
                 if (result)
                 {
                     _logger.LogInformation($"修改{_entityName}{model.SysPageName}");
                 }
             }
-            return result ? SuccessRes() : ErrRes();
+            return result ? Ok() : Error();
         }
 
 
@@ -171,17 +177,18 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         [HttpPost]
         public async Task<IActionResult> Checks(string ids, int status = 1)
         {
-            var lstUpdateModel = await _unitOfWork.SysPageRepository.GetListAsync(o => ids.TrimEnd(',').Split(',', StringSplitOptions.None).Contains(o.SysPageId));
+            var lstUpdateModel = await DbContext.GetListAsync<SysPage>(o => ids.TrimEnd(',').Split(',', StringSplitOptions.None).Contains(o.SysPageId));
             bool result = false;
             if (lstUpdateModel.Count > 0)
             {
                 for (int i = 0; i < lstUpdateModel.Count; i++)
                 {
                     lstUpdateModel[i].Status = status;
+                    result = await DbContext.UpdateAsync<SysPage>(lstUpdateModel[i]);
                 }
-                result = await _unitOfWork.SysPageRepository.UpdateAsync(lstUpdateModel);
+                
             }
-            return ResultRes(result);
+            return Result(result);
         }
 
         /// <summary>
@@ -192,18 +199,22 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         [HttpPost]
         public async Task<IActionResult> Deletes(string ids)
         {
-            var lstDelModel = await _unitOfWork.SysPageRepository.GetListAsync(o => ids.TrimEnd(',').Split(',', StringSplitOptions.None).Contains(o.SysPageId));
-            bool result = false;
-            if (lstDelModel.Count > 0)
+            var lstIds = ids.Split(',');
+            var lstModel = DbContext.Queryable<SysPage>().Where(o => lstIds.Contains(o.SysPageId)).Select(o => new
             {
-                result = await _unitOfWork.SysPageRepository.DeleteAsync(lstDelModel);
-                if (result)
-                {
-                    _logger.LogInformation($"删除{lstDelModel.Count}个{_entityName}，{_entityName}编码：{ids}");
-                }
-
+                o.SysPageId,
+                o.Unchangeable
+            }).ToList();
+            if (lstModel.Any(o => o.Unchangeable))
+            {
+                return Error("存在不可删除的数据");
             }
-            return ResultRes(result);
+            var result = DbContext.DeleteByIds<SysPage>(lstIds);
+            if (result)
+            {
+                _logger.LogInformation($"删除{lstIds.Length}个{_entityName}，{_entityName}编码：{ids}");
+            }
+            return Result(result);
         }
         #endregion
     }

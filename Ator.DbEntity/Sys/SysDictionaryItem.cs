@@ -31,5 +31,8 @@ namespace Ator.DbEntity.Sys
         [SugarColumn(Length = 255, IsNullable = true)]
         public string SysDictionaryItemName { get; set; }
 
+
+        [Display(Name = "是否不可删除")]
+        public bool Unchangeable { get; set; } = false;
     }
 }

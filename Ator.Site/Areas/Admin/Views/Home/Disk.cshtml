@@ -166,15 +166,15 @@
                                     <div class="welcome-module">
                                         <div class="layui-row layui-col-space15 layuimini-qiuck">
                                             <div class="layui-col-xs3 layuimini-qiuck-module">
-                                                <a href="javascript:;" layuimini-content-href="page/menu.html" data-title="菜单管理" data-icon="fa fa-window-maximize">
-                                                    <i class="fa fa-window-maximize"></i>
-                                                    <cite>作品管理</cite>
+                                                <a href="javascript:;" layuimini-content-href="/Admin/SysCmsInfo/Index" data-title="信息管理" data-icon="fa fa-info">
+                                                    <i class="fa fa-info"></i>
+                                                    <cite>信息管理</cite>
                                                 </a>
                                             </div>
                                             <div class="layui-col-xs3 layuimini-qiuck-module">
-                                                <a href="javascript:;" layuimini-content-href="page/setting.html" data-title="系统设置" data-icon="fa fa-gears">
-                                                    <i class="fa fa-gears"></i>
-                                                    <cite>系统设置</cite>
+                                                <a href="javascript:;" layuimini-content-href="/Admin/SysLinkItem/Index" data-title="链接管理" data-icon="fa fa-link">
+                                                    <i class="fa fa-link"></i>
+                                                    <cite>链接管理</cite>
                                                 </a>
                                             </div>
                                             <div class="layui-col-xs3 layuimini-qiuck-module">
@@ -184,9 +184,9 @@
                                                 </a>
                                             </div>
                                             <div class="layui-col-xs3 layuimini-qiuck-module">
-                                                <a href="javascript:;" layuimini-content-href="https://www.baidu.com" data-title="百度搜索" data-icon="fa fa-search">
-                                                    <i class="fa fa-search"></i>
-                                                    <cite>百度搜索</cite>
+                                                <a href="javascript:;" layuimini-content-href="/Admin/SysSetting/Index" data-title="系统设置" data-icon="fa fa-gears">
+                                                    <i class="fa fa-gears"></i>
+                                                    <cite>系统设置</cite>
                                                 </a>
                                             </div>
                                         </div>
@@ -201,13 +201,23 @@
                     <div class="layui-card">
                         <div class="layui-card-header"><i class="fa fa-bullhorn icon icon-tip"></i>系统公告</div>
                         <div class="layui-card-body layui-text">
-                            <div class="layuimini-notice">
+                            @foreach (var item in ViewBag.lstGongGao)
+                            {
+                                <div class="layuimini-notice">
+                                    <div class="layuimini-notice-title">@item.SysLinkName</div>
+                                    <div class="layuimini-notice-extra">@item.CreateTime.ToString("yyyy-MM-dd HH:mm:ss")</div>
+                                    <div class="layuimini-notice-content layui-hide">
+                                        @item.SysLinkUrl<br>
+                                    </div>
+                                </div>
+                            }
+                            @*<div class="layuimini-notice">
                                 <div class="layuimini-notice-title">v2.0.0 上线了</div>
                                 <div class="layuimini-notice-extra">2020-09-15 23:06</div>
                                 <div class="layuimini-notice-content layui-hide">
                                     Ator后台管理系统 v2.0.0 上线了<br>
                                 </div>
-                            </div>
+                            </div>*@
                         </div>
                     </div>
 

@@ -569,6 +569,25 @@ namespace Ator.Repository
         }
 
         /// <summary>
+        /// 【异步】获取分页列表【Linq表达式条件，页码，每页条数】
+        /// </summary>
+        /// <typeparam name="TSource">数据源类型</typeparam>
+        /// <param name="db"></param>
+        /// <param name="whereExp">Linq表达式条件</param>
+        /// <param name="pageIndex">页码（从0开始）</param>
+        /// <param name="pageSize">每页条数</param>
+        /// <returns></returns>
+        public static async Task<PageData<TSource>> GetPageListAsync<TSource>(this SqlSugarClient db, Expression<Func<TSource, bool>> whereExp, string orderBy, int pageIndex, int pageSize) where TSource : EntityDb, new()
+        {
+            return await Task.Run(() =>
+            {
+                int count = 0;
+                var result = db.Queryable<TSource>().WhereIF(whereExp != null, whereExp).OrderByIF(!string.IsNullOrEmpty(orderBy), orderBy).ToPageList(pageIndex, pageSize, ref count);
+                return new PageData<TSource>(result, pageIndex, pageSize, count);
+            });
+        }
+
+        /// <summary>
         /// 获取分页列表【Linq表达式条件，页码，每页条数】
         /// </summary>
         /// <typeparam name="TSource">数据源类型</typeparam>
@@ -583,6 +602,24 @@ namespace Ator.Repository
             int count = 0;
             var result = db.Queryable<TSource>().WhereIF(whereExp!=null, whereExp).OrderByIF(!string.IsNullOrEmpty(orderBy), orderBy).ToPageList(pageIndex, pageSize, ref count);
             var pageResult = new PageData<TMap>(result.Map<TSource, TMap>(), pageIndex, pageSize, count);
+            return pageResult;
+        }
+
+        /// <summary>
+        /// 获取分页列表【Linq表达式条件，页码，每页条数】
+        /// </summary>
+        /// <typeparam name="TSource">数据源类型</typeparam>
+        /// <typeparam name="TMap">数据源映射类型</typeparam>
+        /// <param name="db"></param>
+        /// <param name="whereExp">Linq表达式条件</param>
+        /// <param name="pageIndex">页码（从0开始）</param>
+        /// <param name="pageSize">每页条数</param>
+        /// <returns></returns>
+        public static async Task<PageData<TMap>> GetPageListAsync<TSource, TMap>(this SqlSugarClient db, Expression<Func<TSource, bool>> whereExp, string orderBy, int pageIndex, int pageSize) where TSource : EntityDb, new()
+        {
+            RefAsync<int> count  = new RefAsync<int>();
+            var result = await db.Queryable<TSource>().WhereIF(whereExp != null, whereExp).OrderByIF(!string.IsNullOrEmpty(orderBy), orderBy).ToPageListAsync(pageIndex, pageSize, count);
+            var pageResult = new PageData<TMap>(result.Map<TSource, TMap>(), pageIndex, pageSize, count.Value);
             return pageResult;
         }
 

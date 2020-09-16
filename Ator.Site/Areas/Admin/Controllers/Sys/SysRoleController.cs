@@ -12,7 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Ator.Entity.Sys;
+using Ator.DbEntity.Factory;
+using Ator.DbEntity.Sys;
 using Ator.IService;
 using Ator.Model.ViewModel.Sys;
 using Ator.Repository;
@@ -26,16 +27,17 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
 {
 
     [Area("Admin")]
+    [Route("Admin/[controller]/[action]")]
     public class SysRoleController : BaseController
     {
         #region Init
         private string _entityName = "角色";
-        private UnitOfWork _unitOfWork;
+        
         private readonly ILogger _logger;
         private IMapper _mapper;
-        public SysRoleController(UnitOfWork unitOfWork, ILogger<SysRoleController> logger, IMapper mapper)
+        public SysRoleController(DbFactory factory, ILogger<SysRoleController> logger, IMapper mapper)
         {
-            _unitOfWork = unitOfWork;
+             DbContext = factory.GetDbContext();
             _logger = logger; 
             _mapper = mapper;
         }
@@ -53,7 +55,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         {
             ViewBag.id = id;
             ViewBag.isCreate = string.IsNullOrEmpty(id);
-            var model = _unitOfWork.SysRoleRepository.Get(id);
+            var model = DbContext.GetById<SysRole>(id);
             return View(model ?? new SysRole() { Status = 1 });
         }
 
@@ -73,8 +75,8 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         [HttpGet]
         public async Task<IActionResult> GetData(string id)
         {
-            var data = await _unitOfWork.SysRoleRepository.GetAsync(id);
-            return SuccessRes(data);
+            var data = await DbContext.GetByIdAsync<SysRole>(id,true);
+            return Ok(data);
         }
 
         /// <summary>
@@ -96,11 +98,11 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
             #endregion
 
             //查询数据
-            var searchData = await _unitOfWork.SysRoleRepository.GetPageAsync(predicate, search.Ordering, search.Page, search.Limit);
+            var searchData = await DbContext.GetPageListAsync<SysRole, SysRoleSearchDto>(predicate.And(o => true), search.Ordering, search.Page, search.Limit);
 
             //获得返回集合Dto
-            search.ReturnData = searchData.Rows.Select(o => _mapper.Map<SysRoleSearchDto>(o)).ToList();
-            return SuccessRes(search.ReturnData, searchData.Totals);
+            search.ReturnData = searchData.Rows;
+            return Ok(search.ReturnData, searchData.Totals);
         }
 
         /// <summary>
@@ -114,16 +116,16 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
             var errMsg = GetModelErrMsg();
             if (!string.IsNullOrEmpty(errMsg))
             {
-                return ErrRes(errMsg);
+                return Error(errMsg);
             }
             model.Status = model.Status ?? 2;
             if (string.IsNullOrEmpty(model.SysRoleId))
             {
                 model.SysRoleId = GuidKey;
                 model.CreateTime = DateTime.Now;
-                model.CreateUser = Id;
+                model.CreateUser = CurrentLoginUser.Id;
 
-                result = await _unitOfWork.SysRoleRepository.InsertAsync(model);
+                result = await DbContext.InsertAsync<SysRole>(model);
                 if (result)
                 {
                     _logger.LogInformation($"添加{_entityName}{model.RoleName}");
@@ -134,7 +136,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
                 //定义可以修改的列
                 var lstColumn = new List<string>()
                 {
-                    nameof(SysRole.RoleName), nameof(SysRole.Remark), nameof(SysRole.Sort), nameof(SysRole.Status)
+                    nameof(SysRole.SysRoleId),nameof(SysRole.RoleName), nameof(SysRole.Remark), nameof(SysRole.Sort), nameof(SysRole.Status)
                 };
                 if (!string.IsNullOrEmpty(columns))//固定过滤只修改某字段
                 {
@@ -145,15 +147,16 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
                     else
                     {
                         lstColumn = lstColumn.Where(o => columns.Split(',').Contains(o)).ToList();
+                        lstColumn.Add(nameof(SysRole.SysRoleId));
                     }
                 }
-                result = await _unitOfWork.SysRoleRepository.UpdateAsync(model, true, lstColumn);
+                result = await DbContext.UpdateAsync<SysRole>(model, lstColumn);
                 if (result)
                 {
                     _logger.LogInformation($"修改{_entityName}{model.RoleName}");
                 }
             }
-            return result ? SuccessRes() : ErrRes();
+            return result ? Ok() : Error();
         }
 
 
@@ -166,17 +169,17 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         [HttpPost]
         public async Task<IActionResult> Checks(string ids, int status = 1)
         {
-            var lstUpdateModel = await _unitOfWork.SysRoleRepository.GetListAsync(o => ids.TrimEnd(',').Split(',', StringSplitOptions.None).Contains(o.SysRoleId));
+            var lstUpdateModel = await DbContext.GetListAsync<SysRole>(o => ids.TrimEnd(',').Split(',', StringSplitOptions.None).Contains(o.SysRoleId));
             bool result = false;
             if (lstUpdateModel.Count > 0)
             {
                 for (int i = 0; i < lstUpdateModel.Count; i++)
                 {
                     lstUpdateModel[i].Status = status;
-                }
-                result = await _unitOfWork.SysRoleRepository.UpdateAsync(lstUpdateModel);
+                    result = await DbContext.UpdateAsync<SysRole>(lstUpdateModel[i]);
+                } 
             }
-            return ResultRes(result);
+            return Result(result);
         }
 
         /// <summary>
@@ -187,18 +190,13 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         [HttpPost]
         public async Task<IActionResult> Deletes(string ids)
         {
-            var lstDelModel = await _unitOfWork.SysRoleRepository.GetListAsync(o => ids.TrimEnd(',').Split(',', StringSplitOptions.None).Contains(o.SysRoleId));
-            bool result = false;
-            if (lstDelModel.Count > 0)
+            var lstIds = ids.Split(',');
+            var result = DbContext.DeleteByIds<SysRole>(lstIds);
+            if (result)
             {
-                result = await _unitOfWork.SysRoleRepository.DeleteAsync(lstDelModel);
-                if (result)
-                {
-                    _logger.LogInformation($"删除{lstDelModel.Count}个{_entityName}，{_entityName}编码：{ids}");
-                }
-
+                _logger.LogInformation($"删除{lstIds.Length}个{_entityName}，{_entityName}编码：{ids}");
             }
-            return ResultRes(result);
+            return Result(result);
         }
         #endregion
     }

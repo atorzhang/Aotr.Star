@@ -179,7 +179,7 @@ body {
   width: 100%;
 }
 .weadmin-body {
-  padding: 20px;
+  padding: 16px;
 }
 .weadmin-nav {
   padding: 0 20px;
@@ -200,8 +200,8 @@ body {
   background-color: #f2f2f2;
 }
 .we-search {
-  margin-bottom: 20px;
-  font-size: 16px;
+  margin-bottom: 12px;
+  font-size: 14px;
 }
 .we-search input.layui-input {
   width: 190px;

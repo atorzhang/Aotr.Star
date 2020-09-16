@@ -28,20 +28,6 @@
     @RenderSection("Heads", required: false)
 </head>
 <body>
-    <div class="weadmin-nav">
-        <span>
-            <a href="javascript:;">首页 &gt; </a>
-            <a href="javascript:;">@ViewBag.SecondName &gt; </a>
-            <a>
-                <cite>@ViewBag.PageName</cite>
-            </a>
-        </span>
-        <a class="layui-btn layui-btn-sm" style="line-height:1.8em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
-
-            <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
-            @*<i class="layui-icon" style="line-height:30px">ဂ</i>*@
-        </a>
-    </div>
     @RenderBody()
     <environment include="Development">
         <script src="~/lib/jquery/jquery-1.12.4.min.js" charset="utf-8"></script>

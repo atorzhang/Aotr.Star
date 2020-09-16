@@ -55,7 +55,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         {
             ViewBag.id = id;
             ViewBag.isCreate = string.IsNullOrEmpty(id);
-            var model = DbContext.GetById<SysCmsColumn>(id,true);
+            var model = DbContext.GetById<SysCmsColumn>(id);
             ViewBag.SysCmsColumnParentSelect = _SysCmsColumnService.GetColumnList();
             return View(model ?? new SysCmsColumn() { Status = 1 });
         }
@@ -104,7 +104,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
             #endregion
 
             //查询数据
-            var searchData = DbContext.GetPageList<SysCmsColumn>(predicate, search.Ordering, search.Page, search.Limit);
+            var searchData = DbContext.GetPageList<SysCmsColumn>(predicate.And(o => true), search.Ordering, search.Page, search.Limit);
 
             //获得返回集合Dto
             search.ReturnData = searchData.Rows;
@@ -201,6 +201,15 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         public async Task<IActionResult> Deletes(string ids)
         {
             var lstIds = ids.Split(',');
+            var lstModel = DbContext.Queryable<SysCmsColumn>().Where(o => lstIds.Contains(o.SysCmsColumnId)).Select(o => new
+            {
+                o.SysCmsColumnId,
+                o.Unchangeable
+            }).ToList();
+            if(lstModel.Any(o => o.Unchangeable))
+            {
+                return Error("存在不可删除的数据");
+            }
             var result =  DbContext.DeleteByIds<SysCmsColumn>(lstIds);
             if (result)
             {

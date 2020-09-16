@@ -12,19 +12,19 @@ namespace Ator.Model
         /// <summary>
         /// 权限菜单树
         /// </summary>
-        public List<SystemMenu> MenuInfo { get; set; } = new List<SystemMenu>();
+        public List<SystemMenu> menuInfo { get; set; } = new List<SystemMenu>();
 
         /// <summary>
         /// logo
         /// </summary>
-        public LogoInfo LogoInfo { get; set; } = new LogoInfo();
+        public LogoInfo logoInfo { get; set; } = new LogoInfo();
 
         /// <summary>
         /// Home
         /// </summary>
-        public HomeInfo HomeInfo { get; set; } = new HomeInfo();
+        public HomeInfo homeInfo { get; set; } = new HomeInfo();
 
-        public Clearinfo Clearinfo { get; set; } = new Clearinfo();
+        public Clearinfo clearinfo { get; set; } = new Clearinfo();
 
     }
 
@@ -63,42 +63,42 @@ namespace Ator.Model
         /// <summary>
         /// 数据ID
         /// </summary>
-        public string Id { get; set; }
+        public string id { get; set; }
 
         /// <summary>
         /// 父级ID
         /// </summary>
-        public string PId { get; set; }
+        public string pId { get; set; }
 
         /// <summary>
         /// 节点名称
         /// </summary>
-        public string Title { get; set; }
+        public string title { get; set; }
 
         /// <summary>
         /// 节点地址
         /// </summary>
-        public string Href { get; set; }
+        public string href { get; set; }
 
         /// <summary>
         /// 新开Tab方式
         /// </summary>
-        public string Target { get; set; } = "_self";
+        public string target { get; set; } = "_self";
 
         /// <summary>
         /// 菜单图标样式
         /// </summary>
-        public string Icon { get; set; }
+        public string icon { get; set; }
 
         /// <summary>
         /// 排序
         /// </summary>
-        public int Sort { get; set; }
+        public int sort { get; set; }
 
         /// <summary>
         /// 子集
         /// </summary>
-        public List<SystemMenu> Child { get; set; }
+        public List<SystemMenu> child { get; set; }
     }
  
 }

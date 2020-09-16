@@ -7,20 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Areas\Admin\Controllers\Sys\SysCmsInfoCommentController.cs" />
-    <Compile Remove="Areas\Admin\Controllers\Sys\SysCmsInfoController.cs" />
-    <Compile Remove="Areas\Admin\Controllers\Sys\SysDictionaryController.cs" />
-    <Compile Remove="Areas\Admin\Controllers\Sys\SysDictionaryItemController.cs" />
-    <Compile Remove="Areas\Admin\Controllers\Sys\SysLinkItemController.cs" />
-    <Compile Remove="Areas\Admin\Controllers\Sys\SysLinkTypeController.cs" />
-    <Compile Remove="Areas\Admin\Controllers\Sys\SysPageController.cs" />
-    <Compile Remove="Areas\Admin\Controllers\Sys\SysRoleController.cs" />
-    <Compile Remove="Areas\Admin\Controllers\Sys\SysRolePageController.cs" />
-    <Compile Remove="Areas\Admin\Controllers\Sys\SysSettingController.cs" />
-    <Compile Remove="Areas\Admin\Controllers\Sys\SysUserController.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="Areas\Admin\Views\KindEditorTest\Index.cshtml" />
     <None Include="wwwroot\js\admin\form.js" />
     <None Include="wwwroot\js\admin\list.js" />

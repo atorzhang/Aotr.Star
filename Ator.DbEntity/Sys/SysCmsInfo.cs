@@ -99,5 +99,8 @@ namespace Ator.DbEntity.Sys
         [SugarColumn(Length = 32, IsNullable = true)]
         public string SysCmsColumnId { get; set; }
 
+
+        [Display(Name = "是否不可删除")]
+        public bool Unchangeable { get; set; } = false;
     }
 }

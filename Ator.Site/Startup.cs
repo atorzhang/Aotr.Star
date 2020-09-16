@@ -74,7 +74,10 @@ namespace Ator.Site
             #endregion
 
             //×¢²ámvc¿ØÖÆÆ÷ºÍÊÓÍ¼
-            services.AddControllersWithViews()
+            services.AddControllersWithViews(option => 
+                { 
+                    option.Filters.Add(typeof(Rule.Config.GlobalExceptionFilter));
+                })
                 .AddRazorRuntimeCompilation()
                 .AddJsonOptions(option =>
                 {

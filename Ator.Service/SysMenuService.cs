@@ -29,28 +29,28 @@ namespace Ator.Service
             var rootMenu = new MenusInfoResultDTO();
             //LogoInfo初始化
             var imageModel = await DbContext.GetByIdAsync<SysLinkItem>("LogoImgLink");
-            rootMenu.LogoInfo.image = imageModel?.SysLinkImg;
+            rootMenu.logoInfo.image = imageModel?.SysLinkImg;
             var siteNameModel = await DbContext.GetAsync<SysSetting>(o => o.SysSettingId == "SiteName");
-            rootMenu.LogoInfo.title = siteNameModel?.SetValue;
+            rootMenu.logoInfo.title = siteNameModel?.SetValue;
 
             //HomeInfo初始化
-            rootMenu.HomeInfo = new HomeInfo();
+            rootMenu.homeInfo = new HomeInfo();
 
             //MenuInfo初始化
             var allSysPage = DbContext.GetList<SysPage>(o => o.Status == 1, "SysPageParent,Sort");
             var allTopPage = allSysPage.Where(o => string.IsNullOrEmpty(o.SysPageParent)).ToList();
-            rootMenu.MenuInfo = new List<SystemMenu>();
+            rootMenu.menuInfo = new List<SystemMenu>();
             foreach (var topPage in allTopPage)
             {
                 var subMenu = new SystemMenu
                 {
-                    Title = topPage.SysPageName,
-                    Href = topPage.SysPageUrl,
-                    Icon = topPage.SysPageImg,
-                    Id = topPage.SysPageId
+                    title = topPage.SysPageName,
+                    href = topPage.SysPageUrl,
+                    icon = topPage.SysPageImg,
+                    id = topPage.SysPageId
                 };
                 GetTreeNodeListByNoLockedDTOArray(allSysPage, subMenu);
-                rootMenu.MenuInfo.Add(subMenu);
+                rootMenu.menuInfo.Add(subMenu);
             }
             //返回实体
             return rootMenu;
@@ -68,23 +68,23 @@ namespace Ator.Service
             {
                 return;
             }
-            var childreDataList = systemMenuEntities.Where(p => p.SysPageParent == rootNode.Id);
+            var childreDataList = systemMenuEntities.Where(p => p.SysPageParent == rootNode.id);
             if (childreDataList != null && childreDataList.Count() > 0)
             {
-                rootNode.Child = new List<SystemMenu>();
+                rootNode.child = new List<SystemMenu>();
                 foreach (var item in childreDataList)
                 {
                     SystemMenu treeNode = new SystemMenu()
                     {
-                        Id = item.SysPageId,
-                        Icon = item.SysPageImg,
-                        Href = item.SysPageUrl,
-                        Title = item.SysPageName,
+                        id = item.SysPageId,
+                        icon = item.SysPageImg,
+                        href = item.SysPageUrl,
+                        title = item.SysPageName,
                     };
-                    rootNode.Child.Add(treeNode);
+                    rootNode.child.Add(treeNode);
                 }
 
-                foreach (var item in rootNode.Child)
+                foreach (var item in rootNode.child)
                 {
                     GetTreeNodeListByNoLockedDTOArray(systemMenuEntities, item);
                 }

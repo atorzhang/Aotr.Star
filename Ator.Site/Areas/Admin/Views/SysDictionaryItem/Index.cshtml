@@ -28,14 +28,10 @@
 
                 </select>
             </div>
-            <div class="layui-inline">名称:</div>
             <div class="layui-inline">
-                <input type="text" name="SysLinkName" placeholder="请输入字典项名称" autocomplete="off" class="layui-input">
+                <input type="text" name="SysDictionaryItemName" placeholder="请输入字典项名称" autocomplete="off" class="layui-input">
             </div>
-            <div class="layui-inline">分组:</div>
-            <div class="layui-inline">
-                <input type="text" name="SysLinkGroup" placeholder="请输入字典项分组" autocomplete="off" class="layui-input">
-            </div>
+         
             <button class="layui-btn" type="button" lay-submit="" id="btnSreach" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
         </form>
     </div>
@@ -84,7 +80,7 @@
                 , { field: 'SysDictionaryItemValue', title: '字典项值', edit: true, sort: true }
                 
                 , { field: 'Sort', title: '排序', edit: true, sort: true }
-                , { field: 'CreateTime', title: '创建时间', width: 120, sort: true }
+                , { field: 'CreateTime', title: '创建时间', width: 160, sort: true }
                 , { field: 'Remark', title: '备注', edit: true, sort: true }
                 , { field: 'Status', title: '状态', width: 80, sort: true, templet: '#switchTpl', unresize: true }
                 , { fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150 }

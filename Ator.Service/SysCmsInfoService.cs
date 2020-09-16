@@ -3,13 +3,16 @@ using Ator.DbEntity.Sys;
 using Ator.IService;
 using Ator.Model;
 using Ator.Model.Api.TimeLine;
+using Ator.Model.ViewModel.Sys;
 using Ator.Repository;
 using Ator.Repository.Sys;
 using Ator.Utility.Ext;
+using LinqKit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Ator.Service
 {
@@ -29,6 +32,62 @@ namespace Ator.Service
             }
             return data;
         }
+
+        public PageData<SysCmsInfoSearchDto> GetInfoPage(string SysCmsColumnId, string InfoTitle, string InfoType, string Status, string ordering, int Page, int Limit)
+        {
+            var predicate = PredicateBuilder.New<SysCmsInfo>(true);//查询条件
+
+            #region 添加条件查询
+            if (!string.IsNullOrEmpty(InfoTitle))
+            {
+                predicate = predicate.And(i => i.InfoTitle.Contains(InfoTitle));
+            }
+            if (!string.IsNullOrEmpty(SysCmsColumnId))
+            {
+                predicate = predicate.And(i => i.SysCmsColumnId.Equals(SysCmsColumnId));
+            }
+            if (!string.IsNullOrEmpty(InfoType))
+            {
+                predicate = predicate.And(i => i.InfoType.Equals(InfoType));
+            }
+            if (!string.IsNullOrEmpty(Status))
+            {
+                predicate = predicate.And(i => i.Status.Equals(int.Parse(Status)));
+            }
+            #endregion
+            var pageData = DbContext.GetPageList<SysCmsInfo, SysCmsInfoSearchDto>(predicate, ordering, Page, Limit);
+            return pageData;
+        }
+
+    
+
+        public async Task<PageData<SysCmsInfoSearchDto>> GetInfoPageAsync(string SysCmsColumnId, string InfoTitle, string InfoType, string Status, string ordering, int Page, int Limit)
+        {
+            var predicate = PredicateBuilder.New<SysCmsInfo>(true);//查询条件
+
+            #region 添加条件查询
+            if (!string.IsNullOrEmpty(InfoTitle))
+            {
+                predicate = predicate.And(i => i.InfoTitle.Contains(InfoTitle));
+            }
+            if (!string.IsNullOrEmpty(SysCmsColumnId))
+            {
+                predicate = predicate.And(i => i.SysCmsColumnId.Equals(SysCmsColumnId));
+            }
+            if (!string.IsNullOrEmpty(InfoType))
+            {
+                predicate = predicate.And(i => i.InfoType.Equals(InfoType));
+            }
+            if (!string.IsNullOrEmpty(Status))
+            {
+                predicate = predicate.And(i => i.Status.Equals(int.Parse(Status)));
+            }
+            #endregion
+            var pageData = await DbContext.GetPageListAsync<SysCmsInfo, SysCmsInfoSearchDto>(predicate, ordering, Page, Limit);
+            return pageData;
+        }
+
+
 
         /// <summary>
         /// 获取时间轴数据

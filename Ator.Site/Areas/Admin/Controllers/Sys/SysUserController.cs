@@ -12,7 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Ator.Entity.Sys;
+using Ator.DbEntity.Factory;
+using Ator.DbEntity.Sys;
 using Ator.IService;
 using Ator.Model.ViewModel.Sys;
 using Ator.Repository;
@@ -25,17 +26,18 @@ using Microsoft.Extensions.Logging;
 namespace Ator.Site.Areas.Admin.Controllers.Sys
 {
     [Area("Admin")]
+    [Route("Admin/[controller]/[action]")]
     public class SysUserController : BaseController
     {
         #region Init
         private string _entityName = "用户";
-        private UnitOfWork _unitOfWork;
+        
         private readonly ILogger _logger;
         private ISysUserService _sysUserService;
         private IMapper _mapper;
-        public SysUserController(UnitOfWork unitOfWork, ILogger<SysUserController> logger, ISysUserService sysUserService, IMapper mapper)
+        public SysUserController(DbFactory factory, ILogger<SysUserController> logger, ISysUserService sysUserService, IMapper mapper)
         {
-            _unitOfWork = unitOfWork;
+             DbContext = factory.GetDbContext();
             _logger = logger;
             _sysUserService = sysUserService;
             _mapper = mapper;
@@ -54,7 +56,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         {
             ViewBag.id = id;
             ViewBag.isCreate = string.IsNullOrEmpty(id);
-            var model = _unitOfWork.SysUserRepository.Get(id);
+            var model = DbContext.GetById<SysUser>(id);
             return View(model ?? new SysUser() { Status=1});
         }
 
@@ -74,11 +76,11 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         [HttpGet]
         public async Task<IActionResult> GetData(string id)
         {
-            var data = await _unitOfWork.SysUserRepository.GetAsync(id);
+            var data = await DbContext.GetByIdAsync<SysUser>(id);
             var dataDto = _mapper.Map<SysUserSearchDto>(data);
             if (dataDto == null)
-                return ErrRes("暂无数据");
-            return SuccessRes(dataDto);
+                return Error("暂无数据");
+            return Ok(dataDto);
         }
 
         /// <summary>
@@ -107,13 +109,13 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
             #endregion
 
             //查询数据
-            //var searchData = await _unitOfWork.SysUserRepository.GetPageAsync(predicate, search.Ordering, search.Page, search.Limit);
+            //var searchData = await DbContext.SysUserRepository.GetPageAsync(predicate.And(o => true) search.Ordering, search.Page, search.Limit);
             //多条件排序
-            var searchData = await _unitOfWork.SysUserRepository.GetPageAsync(predicate, $"{nameof(SysUser.Mobile)},-{nameof(SysUser.CreateTime)}", search.Page, search.Limit);
+            var searchData = await DbContext.GetPageListAsync<SysUser>(predicate.And(o => true), $"{nameof(SysUser.Mobile)},-{nameof(SysUser.CreateTime)}", search.Page, search.Limit);
 
             //获得返回集合Dto
             search.ReturnData = searchData.Rows.Select(o => _mapper.Map<SysUserSearchDto>(o)).ToList();
-            return SuccessRes(search.ReturnData, searchData.Totals);
+            return Ok(search.ReturnData, searchData.Totals);
         }
 
         /// <summary>
@@ -127,21 +129,21 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
             var errMsg = GetModelErrMsg();
             if (!string.IsNullOrEmpty(errMsg))
             {
-                return ErrRes(errMsg);
+                return Error(errMsg);
             }
             model.Status = model.Status ?? 2;
             if (string.IsNullOrEmpty(model.SysUserId))
             {
-                if (_unitOfWork.SysUserRepository.Any(o => o.UserName == model.UserName))
+                if (DbContext.Get<SysUser>(o => o.UserName == model.UserName) != null)
                 {
-                    return ErrRes($"{_entityName}已存在");
+                    return Error($"{_entityName}已存在");
                 }
                 model.SysUserId = GuidKey;
                 model.Password = model.Password.Md532();
                 model.CreateTime = DateTime.Now;
-                model.CreateUser = Id;
+                model.CreateUser = CurrentLoginUser.Id;
                 
-                result = await _unitOfWork.SysUserRepository.InsertAsync(model);
+                result = await DbContext.InsertAsync<SysUser>(model);
                 if (result)
                 {
                     _logger.LogInformation($"添加{_entityName}{model.UserName}");
@@ -151,24 +153,25 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
             {
                 if(model.SysUserId == "e3a31ac69f7946ca9218f865e8a4b875" || model.UserName == "admin")//
                 {
-                    return ErrRes("管理员账户不允许修改");
+                    return Error("管理员账户不允许修改");
                 }
                 //定义可以修改的列
                 var lstColumn = new List<string>()
                 {
-                    nameof(SysUser.Email), nameof(SysUser.Mobile), nameof(SysUser.NikeName), nameof(SysUser.QQ), nameof(SysUser.TrueName), nameof(SysUser.Status)
+                    nameof(SysUser.SysUserId),nameof(SysUser.Email), nameof(SysUser.Mobile), nameof(SysUser.NikeName), nameof(SysUser.QQ), nameof(SysUser.TrueName), nameof(SysUser.Status)
                 };
                 if (!string.IsNullOrEmpty(columns))//固定过滤只修改某字段
                 {
                     lstColumn = lstColumn.Where(o => columns.Split(',').Contains(o)).ToList();
+                    lstColumn.Add(nameof(SysUser.SysUserId));
                 }
-                result = await _unitOfWork.SysUserRepository.UpdateAsync(model,true, lstColumn);
+                result = await DbContext.UpdateAsync<SysUser>(model, lstColumn);
                 if (result)
                 {
                     _logger.LogInformation($"修改{_entityName}{model.UserName}");
                 }
             }
-            return result?SuccessRes():ErrRes();
+            return result?Ok():Error();
         }
 
 
@@ -181,17 +184,17 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         [HttpPost]
         public async Task<IActionResult> Checks(string ids,int status = 1)
         {
-            var lstUpdateModel = await _unitOfWork.SysUserRepository.GetListAsync(o => ids.TrimEnd(',').Split(',', StringSplitOptions.None).Contains(o.SysUserId));
+            var lstUpdateModel = await DbContext.GetListAsync<SysUser>(o => ids.TrimEnd(',').Split(',', StringSplitOptions.None).Contains(o.SysUserId));
             bool result = false;
             if (lstUpdateModel.Count > 0)
             {
                 for (int i = 0; i < lstUpdateModel.Count; i++)
                 {
                     lstUpdateModel[i].Status = status;
+                    result = await DbContext.UpdateAsync<SysUser>(lstUpdateModel[i]);
                 }
-                result = await _unitOfWork.SysUserRepository.UpdateAsync(lstUpdateModel);
             }
-            return ResultRes(result);
+            return Result(result);
         }
 
         /// <summary>
@@ -202,23 +205,13 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         [HttpPost]
         public async Task<IActionResult> Deletes(string ids)
         {
-            var lstId = ids.TrimEnd(',').Split(',', StringSplitOptions.None);
-            var lstDelModel = await _unitOfWork.SysUserRepository.GetListAsync(o => lstId.Contains(o.SysUserId));
-            if(lstDelModel.Any(o => o.UserName == "admin"))
+            var lstIds = ids.Split(',');
+            var result = DbContext.DeleteByIds<SysUser>(lstIds);
+            if (result)
             {
-                return ErrRes("管理员账户你就不要删除了吧?");
+                _logger.LogInformation($"删除{lstIds.Length}个{_entityName}，{_entityName}编码：{ids}");
             }
-            bool result = false;
-            if(lstDelModel.Count > 0)
-            {
-                result = await _unitOfWork.SysUserRepository.DeleteAsync(lstDelModel);
-                if (result)
-                {
-                    _logger.LogInformation($"删除{lstDelModel.Count}个{_entityName}，{_entityName}编码：{ids}");
-                }
-                
-            }
-            return ResultRes(result);
+            return Result(result);
         }
         #endregion
 
@@ -242,8 +235,12 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
                     TrueName = mobile
                 });
             }
-            var s = await _unitOfWork.SysUserRepository.InsertAsync(lstUser);
-            return s ? SuccessRes() : ErrRes();
+            var s = false;
+            foreach (var item in lstUser)
+            {
+               s = await DbContext.InsertAsync<SysUser>(item);
+            }
+            return s ? Ok() : Error();
         }
     }
 }

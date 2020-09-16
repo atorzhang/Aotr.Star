@@ -12,7 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Ator.Entity.Sys;
+using Ator.DbEntity.Factory;
+using Ator.DbEntity.Sys;
 using Ator.IService;
 using Ator.Model.ViewModel.Sys;
 using Ator.Repository;
@@ -25,18 +26,19 @@ using Microsoft.Extensions.Logging;
 namespace Ator.Site.Areas.Admin.Controllers.Sys
 {
     [Area("Admin")]
+    [Route("Admin/[controller]/[action]")]
     public class SysCmsInfoController : BaseController
     {
         #region Init
         private string _entityName = "页面";
-        private UnitOfWork _unitOfWork;
+
         private readonly ILogger _logger;
         private IMapper _mapper;
         private ISysCmsInfoService _SysCmsInfoService;
         private ISysCmsColumnService _SysCmsColumnService;
-        public SysCmsInfoController(UnitOfWork unitOfWork, ILogger<SysCmsInfoController> logger, IMapper mapper, ISysCmsInfoService SysCmsInfoService, ISysCmsColumnService SysCmsColumnService)
+        public SysCmsInfoController(DbFactory factory, ILogger<SysCmsInfoController> logger, IMapper mapper, ISysCmsInfoService SysCmsInfoService, ISysCmsColumnService SysCmsColumnService)
         {
-            _unitOfWork = unitOfWork;
+            DbContext = factory.GetDbContext();
             _logger = logger;
             _mapper = mapper;
             _SysCmsInfoService = SysCmsInfoService;
@@ -58,7 +60,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         {
             ViewBag.id = id;
             ViewBag.isCreate = string.IsNullOrEmpty(id);
-            var model = _unitOfWork.SysCmsInfoRepository.Get(id);
+            var model = DbContext.GetById<SysCmsInfo>(id);
             ViewBag.SysCmsColumnParentSelect = _SysCmsColumnService.GetColumnList();
             ViewBag.SysCmsColumnId = SysCmsColumnId;
             return View(model ?? new SysCmsInfo() { Status = 1 });
@@ -67,7 +69,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         [HttpGet]
         public async Task<IActionResult> Detail(string id)
         {
-            var data = await _unitOfWork.SysCmsInfoRepository.GetAsync(id);
+            var data = await DbContext.GetByIdAsync<SysCmsInfo>(id,true);
             return View(data);
         }
         #endregion
@@ -81,8 +83,8 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         [HttpGet]
         public async Task<IActionResult> GetData(string id)
         {
-            var data = await _unitOfWork.SysCmsInfoRepository.GetAsync(id);
-            return SuccessRes(data);
+            var data = await DbContext.GetByIdAsync<SysCmsInfo>(id,true);
+            return Ok(data);
         }
 
         /// <summary>
@@ -93,30 +95,14 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         [HttpGet]
         public async Task<IActionResult> GetPageData(SysCmsInfoSearchViewModel search)
         {
-            var predicate = PredicateBuilder.New<SysCmsInfo>(true);//查询条件
-
-            #region 添加条件查询
-            if (!string.IsNullOrEmpty(search.InfoTitle))
-            {
-                predicate = predicate.And(i => i.InfoTitle.Contains(search.InfoTitle));
-            }
-            if (!string.IsNullOrEmpty(search.SysCmsColumnId))
-            {
-                predicate = predicate.And(i => i.SysCmsColumnId.Equals(search.SysCmsColumnId));
-            }
-            #endregion
-
-            //查询数据
-            //var searchData = await _unitOfWork.SysCmsInfoRepository.GetPageAsync(predicate, search.Ordering, search.Page, search.Limit);
-
             //获得返回集合Dto
-            search.ReturnData = _unitOfWork.SysCmsInfoRepository.GetInfoPage(search.SysCmsColumnId, search.InfoTitle,"","", $"-{nameof(SysCmsInfo.InfoTop)},-{nameof(SysCmsInfo.InfoPublishTime)}", search.Page, search.Limit);
-            foreach (var item in search.ReturnData)
+            var reData = _SysCmsInfoService.GetInfoPage(search.SysCmsColumnId, search.InfoTitle, "", "", $"-{nameof(SysCmsInfo.InfoTop)},-{nameof(SysCmsInfo.InfoPublishTime)}", search.Page, search.Limit);
+            search.ReturnData = reData.Rows;
+            foreach (var item in reData.Rows)
             {
-                item.InfoType = (await _unitOfWork.SysCmsColumnRepository.GetAsync(item.SysCmsColumnId))?.ColumnName;
+                item.InfoType = (await DbContext.GetByIdAsync<SysCmsColumn>(item.SysCmsColumnId))?.ColumnName;
             }
-            var totals = await _unitOfWork.SysCmsInfoRepository.CountAsync(predicate);
-            return SuccessRes(search.ReturnData, totals);
+            return Ok(search.ReturnData, reData.Totals);
         }
 
         /// <summary>
@@ -130,10 +116,10 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
             var errMsg = GetModelErrMsg();
             if (!string.IsNullOrEmpty(errMsg))
             {
-                return ErrRes(errMsg);
+                return Error(errMsg);
             }
             model.Status = model.Status ?? 2;
-            var columnModel = await _unitOfWork.SysCmsColumnRepository.GetAsync(model.SysCmsColumnId);
+            var columnModel = await DbContext.GetByIdAsync<SysCmsColumn>(model.SysCmsColumnId);
             if(columnModel != null && columnModel.ColumnParent == "87cb34a9bb084d229f137d4f09b2d742")
             {
                 model.InfoType = "2";//这种为前台展示信息类型
@@ -143,9 +129,9 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
                 model.SysCmsInfoId = GuidKey;
                 
                 model.CreateTime = DateTime.Now;
-                model.CreateUser = Id;
+                model.CreateUser = CurrentLoginUser.Id;
 
-                result = await _unitOfWork.SysCmsInfoRepository.InsertAsync(model);
+                result = await DbContext.InsertAsync<SysCmsInfo>(model);
                 if (result)
                 {
                     _logger.LogInformation($"添加{_entityName}{model.InfoTitle}");
@@ -153,12 +139,12 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
             }
             else
             {
-                model.InfoEditUser = Id;
+                model.InfoEditUser = CurrentLoginUser.Id;
                 model.InfoEditTime = DateTime.Now;
                 //定义可以修改的列
                 var lstColumn = new List<string>()
                 {
-                    nameof(SysCmsInfo.Remark), nameof(SysCmsInfo.Sort), nameof(SysCmsInfo.Status), nameof(SysCmsInfo.InfoTitle), nameof(SysCmsInfo.InfoAbstract), nameof(SysCmsInfo.InfoCheckTime),nameof(SysCmsInfo.InfoCheckUser),nameof(SysCmsInfo.InfoContent),nameof(SysCmsInfo.InfoEditTime),nameof(SysCmsInfo.InfoEditUser),nameof(SysCmsInfo.InfoLable),nameof(SysCmsInfo.InfoPublishTime),nameof(SysCmsInfo.InfoSecTitle),nameof(SysCmsInfo.InfoSource),nameof(SysCmsInfo.InfoTop),nameof(SysCmsInfo.InfoType),nameof(SysCmsInfo.InfoImage)
+                    nameof(SysCmsInfo.SysCmsInfoId),nameof(SysCmsInfo.Remark), nameof(SysCmsInfo.Sort), nameof(SysCmsInfo.Status), nameof(SysCmsInfo.InfoTitle), nameof(SysCmsInfo.InfoAbstract), nameof(SysCmsInfo.InfoCheckTime),nameof(SysCmsInfo.InfoCheckUser),nameof(SysCmsInfo.InfoContent),nameof(SysCmsInfo.InfoEditTime),nameof(SysCmsInfo.InfoEditUser),nameof(SysCmsInfo.InfoLable),nameof(SysCmsInfo.InfoPublishTime),nameof(SysCmsInfo.InfoSecTitle),nameof(SysCmsInfo.InfoSource),nameof(SysCmsInfo.InfoTop),nameof(SysCmsInfo.InfoType),nameof(SysCmsInfo.InfoImage)
                       ,nameof(SysCmsInfo.InfoAuthor)
                 };
                 if (!string.IsNullOrEmpty(columns))//固定过滤只修改某字段
@@ -170,15 +156,16 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
                     else
                     {
                         lstColumn = lstColumn.Where(o => columns.Split(',').Contains(o)).ToList();
+                        lstColumn.Add(nameof(SysCmsInfo.SysCmsInfoId));
                     }
                 }
-                result = await _unitOfWork.SysCmsInfoRepository.UpdateAsync(model, true, lstColumn);
+                result = await DbContext.UpdateAsync<SysCmsInfo>(model, lstColumn);
                 if (result)
                 {
                     _logger.LogInformation($"修改{_entityName}{model.InfoTitle}");
                 }
             }
-            return result ? SuccessRes() : ErrRes();
+            return result ? Ok() : Error();
         }
 
 
@@ -191,17 +178,18 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         [HttpPost]
         public async Task<IActionResult> Checks(string ids, int status = 1)
         {
-            var lstUpdateModel = await _unitOfWork.SysCmsInfoRepository.GetListAsync(o => ids.TrimEnd(',').Split(',', StringSplitOptions.None).Contains(o.SysCmsInfoId));
+            var lstUpdateModel = await DbContext.GetListAsync<SysCmsInfo>(o => ids.TrimEnd(',').Split(',', StringSplitOptions.None).Contains(o.SysCmsInfoId));
             bool result = false;
             if (lstUpdateModel.Count > 0)
             {
                 for (int i = 0; i < lstUpdateModel.Count; i++)
                 {
                     lstUpdateModel[i].Status = status;
+                    result = await DbContext.UpdateAsync<SysCmsInfo>(lstUpdateModel[i]);
                 }
-                result = await _unitOfWork.SysCmsInfoRepository.UpdateAsync(lstUpdateModel);
+                
             }
-            return ResultRes(result);
+            return Result(result);
         }
 
         /// <summary>
@@ -212,18 +200,22 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         [HttpPost]
         public async Task<IActionResult> Deletes(string ids)
         {
-            var lstDelModel = await _unitOfWork.SysCmsInfoRepository.GetListAsync(o => ids.TrimEnd(',').Split(',', StringSplitOptions.None).Contains(o.SysCmsInfoId));
-            bool result = false;
-            if (lstDelModel.Count > 0)
+            var lstIds = ids.Split(',');
+            var lstModel = DbContext.Queryable<SysCmsInfo>().Where(o => lstIds.Contains(o.SysCmsInfoId)).Select(o => new
             {
-                result = await _unitOfWork.SysCmsInfoRepository.DeleteAsync(lstDelModel);
-                if (result)
-                {
-                    _logger.LogInformation($"删除{lstDelModel.Count}个{_entityName}，{_entityName}编码：{ids}");
-                }
-
+                o.SysCmsInfoId,
+                o.Unchangeable
+            }).ToList();
+            if (lstModel.Any(o => o.Unchangeable))
+            {
+                return Error("存在不可删除的数据");
             }
-            return ResultRes(result);
+            var result = DbContext.DeleteByIds<SysCmsInfo>(lstIds);
+            if (result)
+            {
+                _logger.LogInformation($"删除{lstIds.Length}个{_entityName}，{_entityName}编码：{ids}");
+            }
+            return Result(result);
         }
         #endregion
     }

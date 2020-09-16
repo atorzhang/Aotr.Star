@@ -78,7 +78,7 @@ window.onload = function () {
         intData(layui);//初始化数据
         //初始化表格
         table.render({
-            elem: '#listTable'
+             elem: '#listTable'
             , url: _ContralPath + _PageDataPath
             , toolbar: '#listtoolbar'
             , title: _tableTitle
@@ -86,8 +86,8 @@ window.onload = function () {
             //, even: true //开启隔行背景
             , cols: _cols
             , page: true
-            , limits: [10, 20, 50, 100, 500, 1000]
-            , limit: 20 //每页默认显示的数量
+            , limits: [10, 15, 20, 50, 100, 500, 1000, 10000]
+            , limit: 15 //每页默认显示的数量
             , curr: 1 //从第一页开始取数据
             , where: formToJson($('#aeSearch').serialize())
         });
@@ -95,7 +95,7 @@ window.onload = function () {
         $('#btnSreach').on('click', function () {
             table.reload('listTable', {
                 curr: 1  //从第一页开始
-                , where: formToJson($('#aeSearch').serialize())//搜搜条件更新
+                , where: formToJson(decodeURIComponent($('#aeSearch').serialize(), true))//搜搜条件更新
             });
         });
         //头工具栏事件

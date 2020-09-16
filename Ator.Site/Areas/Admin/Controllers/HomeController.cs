@@ -58,6 +58,8 @@ namespace Ator.Site.Areas.Admin.Controllers
         [Authorize]
         public IActionResult Disk()
         {
+            var lstGongGao = DbContext.GetList<SysLinkItem>(o => o.SysLinkTypeId == "announcement" && o.Status == 1, "Sort,CreateTime");
+            ViewBag.lstGongGao = lstGongGao;
             return View();
         }
 

@@ -42,5 +42,7 @@ namespace Ator.DbEntity.Sys
         public string SysLinkImg { get; set; }
 
 
+        [Display(Name = "是否不可删除")]
+        public bool Unchangeable { get; set; } = false;
     }
 }

@@ -12,7 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Ator.Entity.Sys;
+using Ator.DbEntity.Factory;
+using Ator.DbEntity.Sys;
 using Ator.IService;
 using Ator.Model.ViewModel.Sys;
 using Ator.Repository;
@@ -25,18 +26,18 @@ using Microsoft.Extensions.Logging;
 namespace Ator.Site.Areas.Admin.Controllers.Sys
 {
     [Area("Admin")]
+    [Route("Admin/[controller]/[action]")]
     public class SysDictionaryItemController : BaseController
     {
         #region Init
         private string _entityName = "链接";
-        private UnitOfWork _unitOfWork;
         private readonly ILogger _logger;
         private IMapper _mapper;
 
         private ISysDictionaryService _ISysDictionaryService;
-        public SysDictionaryItemController(UnitOfWork unitOfWork, ILogger<SysDictionaryItemController> logger, IMapper mapper, ISysDictionaryService SysDictionaryService)
+        public SysDictionaryItemController(DbFactory factory, ILogger<SysDictionaryItemController> logger, IMapper mapper, ISysDictionaryService SysDictionaryService)
         {
-            _unitOfWork = unitOfWork;
+             DbContext = factory.GetDbContext();
             _logger = logger;
             _mapper = mapper;
             _ISysDictionaryService = SysDictionaryService;
@@ -57,7 +58,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         {
             ViewBag.id = id;
             ViewBag.isCreate = string.IsNullOrEmpty(id);
-            var model = _unitOfWork.SysDictionaryItemRepository.Get(id);
+            var model = DbContext.GetById<SysDictionaryItem>(id);
             ViewBag.SysDictionarySelect = _ISysDictionaryService.GetDictionaryList();
             ViewBag.SysDictionaryId = SysDictionaryId;
             return View(model ?? new SysDictionaryItem() { Status = 1 });
@@ -66,7 +67,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         [HttpGet]
         public async Task<IActionResult> Detail(string id)
         {
-            var data = await _unitOfWork.SysDictionaryItemRepository.GetAsync(id);
+            var data = await DbContext.GetByIdAsync<SysDictionaryItem>(id,true);
             return View(data);
         }
         #endregion
@@ -80,8 +81,8 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         [HttpGet]
         public async Task<IActionResult> GetData(string id)
         {
-            var data = await _unitOfWork.SysDictionaryItemRepository.GetAsync(id);
-            return SuccessRes(data);
+            var data = await DbContext.GetByIdAsync<SysDictionaryItem>(id,true);
+            return Ok(data);
         }
 
         /// <summary>
@@ -106,11 +107,11 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
             #endregion
 
             //查询数据
-            var searchData = await _unitOfWork.SysDictionaryItemRepository.GetPageAsync(predicate, search.Ordering, search.Page, search.Limit);
+            var searchData = await DbContext.GetPageListAsync<SysDictionaryItem>(predicate.And(o => true), search.Ordering, search.Page, search.Limit);
 
             //获得返回集合Dto
             search.ReturnData = searchData.Rows.ToList();
-            return SuccessRes(search.ReturnData, searchData.Totals);
+            return Ok(search.ReturnData, searchData.Totals);
         }
 
         /// <summary>
@@ -124,7 +125,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
             var errMsg = GetModelErrMsg();
             if (!string.IsNullOrEmpty(errMsg))
             {
-                return ErrRes(errMsg);
+                return Error(errMsg);
             }
             model.Status = model.Status ?? 2;
             if (string.IsNullOrEmpty(model.SysDictionaryItemId))
@@ -132,9 +133,9 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
                 model.SysDictionaryItemId = GuidKey;
 
                 model.CreateTime = DateTime.Now;
-                model.CreateUser = Id;
+                model.CreateUser = CurrentLoginUser.Id;
 
-                result = await _unitOfWork.SysDictionaryItemRepository.InsertAsync(model);
+                result = await DbContext.InsertAsync<SysDictionaryItem>(model);
                 if (result)
                 {
                     _logger.LogInformation($"添加{_entityName}{model.SysDictionaryItemName}");
@@ -145,7 +146,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
                 //定义可以修改的列
                 var lstColumn = new List<string>()
                 {
-                    nameof(SysDictionaryItem.Remark), nameof(SysDictionaryItem.Sort), nameof(SysDictionaryItem.Status), nameof(SysDictionaryItem.SysDictionaryItemName), nameof(SysDictionaryItem.SysDictionaryId), nameof(SysDictionaryItem.SysDictionaryItemValue)
+                    nameof(SysDictionaryItem.SysDictionaryItemId),nameof(SysDictionaryItem.Remark), nameof(SysDictionaryItem.Sort), nameof(SysDictionaryItem.Status), nameof(SysDictionaryItem.SysDictionaryItemName), nameof(SysDictionaryItem.SysDictionaryId), nameof(SysDictionaryItem.SysDictionaryItemValue)
 
                 };
                 if (!string.IsNullOrEmpty(columns))//固定过滤只修改某字段
@@ -157,15 +158,16 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
                     else
                     {
                         lstColumn = lstColumn.Where(o => columns.Split(',').Contains(o)).ToList();
+                        lstColumn.Add(nameof(SysDictionaryItem.SysDictionaryItemId));
                     }
                 }
-                result = await _unitOfWork.SysDictionaryItemRepository.UpdateAsync(model, true, lstColumn);
+                result = await DbContext.UpdateAsync<SysDictionaryItem>(model, lstColumn);
                 if (result)
                 {
                     _logger.LogInformation($"修改{_entityName}{model.SysDictionaryItemName}");
                 }
             }
-            return result ? SuccessRes() : ErrRes();
+            return result ? Ok() : Error();
         }
 
 
@@ -178,17 +180,18 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         [HttpPost]
         public async Task<IActionResult> Checks(string ids, int status = 1)
         {
-            var lstUpdateModel = await _unitOfWork.SysDictionaryItemRepository.GetListAsync(o => ids.TrimEnd(',').Split(',', StringSplitOptions.None).Contains(o.SysDictionaryItemId));
+            var lstUpdateModel = await DbContext.GetListAsync<SysDictionaryItem>(o => ids.TrimEnd(',').Split(',', StringSplitOptions.None).Contains(o.SysDictionaryItemId));
             bool result = false;
             if (lstUpdateModel.Count > 0)
             {
                 for (int i = 0; i < lstUpdateModel.Count; i++)
                 {
                     lstUpdateModel[i].Status = status;
+                    result = await DbContext.UpdateAsync<SysDictionaryItem>(lstUpdateModel[i]);
                 }
-                result = await _unitOfWork.SysDictionaryItemRepository.UpdateAsync(lstUpdateModel);
+                
             }
-            return ResultRes(result);
+            return Result(result);
         }
 
         /// <summary>
@@ -199,18 +202,22 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         [HttpPost]
         public async Task<IActionResult> Deletes(string ids)
         {
-            var lstDelModel = await _unitOfWork.SysDictionaryItemRepository.GetListAsync(o => ids.TrimEnd(',').Split(',', StringSplitOptions.None).Contains(o.SysDictionaryItemId));
-            bool result = false;
-            if (lstDelModel.Count > 0)
+            var lstIds = ids.Split(',');
+            var lstModel = DbContext.Queryable<SysDictionaryItem>().Where(o => lstIds.Contains(o.SysDictionaryItemId)).Select(o => new
             {
-                result = await _unitOfWork.SysDictionaryItemRepository.DeleteAsync(lstDelModel);
-                if (result)
-                {
-                    _logger.LogInformation($"删除{lstDelModel.Count}个{_entityName}，{_entityName}编码：{ids}");
-                }
-
+                o.SysDictionaryItemId,
+                o.Unchangeable
+            }).ToList();
+            if (lstModel.Any(o => o.Unchangeable))
+            {
+                return Error("存在不可删除的数据");
             }
-            return ResultRes(result);
+            var result = DbContext.DeleteByIds<SysDictionaryItem>(lstIds);
+            if (result)
+            {
+                _logger.LogInformation($"删除{lstIds.Length}个{_entityName}，{_entityName}编码：{ids}");
+            }
+            return Result(result);
         }
         #endregion
     }

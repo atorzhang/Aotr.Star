@@ -21,6 +21,7 @@ using Ator.Repository;
 using Ator.Utility.Ext;
 using AutoMapper;
 using LinqKit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -28,6 +29,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
 {
     [Area("Admin")]
     [Route("Admin/[controller]/[action]")]
+    [Authorize]
     public class SysCmsInfoCommentController : BaseController
     {
         #region Init

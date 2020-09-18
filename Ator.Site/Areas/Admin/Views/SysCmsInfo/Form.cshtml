@@ -98,7 +98,7 @@
                 <p id="uploadTxt"></p>
             </div>
             <textarea id="InfoImage" name="InfoImage" required=""
-                      autocomplete="off" class="layui-textarea">@Model.InfoImage</textarea>
+                      autocomplete="off" class="layui-textarea" placeholder="保存的图片地址,图片上传完成后会自动填充,多个用英文逗号隔开,若知道图片地址可自行输入">@Model.InfoImage</textarea>
         </div>
     </div>
 
@@ -144,12 +144,57 @@
             </div>
         </div>
     </div>
+
     <div class="layui-form-item">
+        <label for="Remark" class="layui-form-label">
+            内容类型
+        </label>
+        <div class="layui-input-block">
+            <select id="InfoType" name="InfoType" lay-filter="demo" class="layui-select">
+                @if (string.IsNullOrEmpty(Model.SysCmsInfoId))
+                {
+                    <option value="1">富文本</option>
+                    <option selected value="2">多图</option>
+                }
+                else if (Model.InfoType == "1")
+                {
+                    <option selected value="1">富文本</option>
+                    <option value="2">多图</option>
+                }
+                else
+                {
+                    <option value="1">富文本</option>
+                    <option selected value="2">多图</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item" id="InfoContentFWB" style="display:none">
         <label for="InfoContent" class="layui-form-label">
-            内容
+            富文本内容
         </label>
         <div class="layui-input-block">
             <textarea rows="8" class="form-control" name="InfoContent" id="InfoContent" style="width:100%;height:500px;visibility:hidden;">@Model.InfoContent</textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item" id="InfoContentIMG">
+        <label for="ContentImage" class="layui-form-label">
+            多图内容
+        </label>
+        <div class="layui-input-block">
+            <div class="layui-upload">
+                <button type="button" class="layui-btn" id="uploadBtn1">多图上传</button>
+                <button type="button" class="layui-btn layui-btn-normal" id="sortBtn">图片排序</button>
+                <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;height:170px">
+                    预览图：
+                    <div class="layui-upload-list cl imglist" id="uploadImgs1"></div>
+                </blockquote>
+                <p id="uploadTxt1"></p>
+            </div>
+            <textarea id="ContentImage" name="ContentImage" required=""
+                      autocomplete="off" class="layui-textarea" placeholder="保存的图片地址,图片上传完成后会自动填充,多个用英文逗号隔开,若知道图片地址可自行输入">@Model.InfoContentImage</textarea>
         </div>
     </div>
 
@@ -174,10 +219,17 @@
         <button class="layui-btn" lay-filter="add" lay-submit="">@Html.Raw(ViewBag.isCreate ? "添加" : "更新")</button>
     </div>
 </form>
+<div id="sortImgDiv" style="padding-left:20px">
+    <div class="cl imglist" id="img_ul" ></div>
+</div>
+
+
 @section Heads{
     <link href="~/lib/kindeditor-4.1.11/themes/default/default.css" rel="stylesheet" />
+    <link href="~/lib/Jsequencing/Jsequencing.css" rel="stylesheet" />
 }
 @section Scripts{
+    <script src="~/lib/Jsequencing/Jsequencing.js"></script>
     <script src="~/lib/kindeditor-4.1.11/kindeditor-all.js"></script>
     <script src="~/lib/kindeditor-4.1.11/lang/zh-CN.js"></script>
     <script type="text/javascript">
@@ -215,14 +267,80 @@
                 elem: '#InfoPublishTime' //指定元素
                 , type: 'datetime'
             });
+
+            form.on('select(demo)', function (data) {
+                if (data.value == 1) {
+                    $("#InfoContentFWB").show();
+                    $("#InfoContentIMG").hide();
+                } else {
+                    $("#InfoContentFWB").hide();
+                    $("#InfoContentIMG").show();
+                }
+            });
+
             //多图上传初始化
             uploadImagesInit("uploadBtn", "uploadImgs", "InfoImage", "uploadTxt");
+            uploadImagesInit("uploadBtn1", "uploadImgs1", "ContentImage", "uploadTxt1");
+
+            //绑定排序按钮事件
+            $("#sortBtn").click(function () {
+                $("#sortImgDiv").html('<div class="cl imglist" id="img_ul" style=""></div>');
+                var _imgStr = $("#ContentImage").val();
+                if (_imgStr == '') {
+                    layer.msg('请先传图后再进行排序');
+                    return;
+                }
+                var _imgs = _imgStr.split(',');
+                if (_imgs)
+                var imgulp = new Jsequencing({
+                    listid: "img_ul",//页面图片列表ID
+                    thumbherf: "",//列表图片前缀
+                    bigherf: "",//原图前缀[同列表图相同时，省略]
+                    jsondata: false,
+                    imgsrcarr: _imgs,//图片数据数组
+                });
+                layer.open({
+                    type: 1,
+                    title: '移动图片完成排序',
+                    skin: 'layui-layer-rim', //加上边框
+                    area: ['880px', '640px'], //宽高
+                    content: $('#img_ul'),
+                    shade: 0,
+                    btn: ['确定']
+                    , yes: function (index, layero) {
+                        //按钮【按钮一】的回调
+                        var newLstImgs = imgulp.getnewarr();
+                        $("#ContentImage").val(newLstImgs.join());
+                        $('#uploadImgs1').html('');//加载图片前先清空
+                        for (var i = 0; i < newLstImgs.length; i++) {
+                            if (newLstImgs[i] != '') {
+                                var lis = [];
+                                lis.push('<div class="layui-input-inline">');
+                                lis.push('<img src="' + newLstImgs[i] + '" class="layui-upload-img" style="height:120px;width:100%"> ');
+                                lis.push('<a class="layui-btn layui-btn-danger layui-btn-xs demo-reload" onclick="deleteImages(this)">删除</a></div>');
+                                $('#uploadImgs1').append(lis.join(''));//图片加载
+                            }
+                        }
+                        layer.close(index);
+                        $("#sortImgDiv").html('');//清空图片
+
+                    }
+                    , cancel: function () {
+                        //右上角关闭回调
+                        $("#sortImgDiv").html('');
+                        //return false 开启该代码可禁止点击该按钮关闭
+                    }
+                });
+            });
+
         });
         KindEditor.ready(function (K) {
             window.NewsContent = K.create("#InfoContent", {
                 cssPath: '/lib/kindeditor-4.1.11/plugins/code/prettify.css',
                 uploadJson: '/Common/File/KindEditorImgUpload?saveDir=news_content',
                 allowFileManager: true,
+                imageSizeLimit: '10MB', //批量上传图片单张最大容量
+                imageUploadLimit: 100, //批量上传图片同时上传最多个数
                 afterCreate: function () {
                     this.sync();
                 },
@@ -232,6 +350,19 @@
             });
             $(".ke-container").addClass("form-control");
         });
+
+        var contentType = 2;
+        @Html.Raw((Model.InfoType == "1" && !string.IsNullOrEmpty(Model.SysCmsInfoId) ? "contentType = 1" : " "));
+        if (contentType == 2) {
+            $("#InfoContentFWB").hide();
+            $("#InfoContentIMG").show();
+        }
+        else {
+            $("#InfoContentFWB").show();
+            $("#InfoContentIMG").hide();
+        }
+
+
     </script>
 }
 

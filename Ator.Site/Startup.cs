@@ -35,7 +35,7 @@ namespace Ator.Site
         }
 
         public IConfiguration Configuration { get; }
-
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";//名字随便起
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -73,6 +73,15 @@ namespace Ator.Site
             });
             #endregion
 
+            //配置跨域
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                    builder => builder.AllowAnyOrigin()
+                    .WithMethods("GET", "POST", "HEAD", "PUT", "DELETE", "OPTIONS")
+                );
+            });
+
             //注册mvc控制器和视图
             services.AddControllersWithViews(option => 
                 { 
@@ -103,6 +112,8 @@ namespace Ator.Site
             app.UseStaticFiles();//使用静态文件
 
             app.UseRouting();//使用路由
+
+            app.UseCors(MyAllowSpecificOrigins);//配置跨域
 
             app.UseSession();//使用Session
 

@@ -19,7 +19,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" href="~/lib/layui-v2.5.5/css/layui.css" charset="utf-8">
     <link rel="stylesheet" href="/css/font.css">
-    <link rel="stylesheet" href="/css/weadmin.css">
+    <link rel="stylesheet" href="/css/weadmin.css?v=@DateTime.Now.DayOfYear">
     <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
     <!--[if lt IE 9]>
       <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
@@ -33,19 +33,9 @@
         @RenderBody()
 
     </div>
-    <environment include="Development">
-        <script src="~/lib/jquery/jquery-1.12.4.min.js" charset="utf-8"></script>
-    </environment>
-    <environment exclude="Development">
-        <script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.12.4.min.js"
-                asp-fallback-src="~/lib/jquery/jquery-1.12.4.min.js"
-                asp-fallback-test="window.jQuery"
-                crossorigin="anonymous"
-                integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
-        </script>
-    </environment>
+    <script src="~/lib/jquery/jquery-1.12.4.min.js" charset="utf-8"></script>
     <script src="~/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
-    <script src="/js/admin/form.js" charset="utf-8"></script>
+    <script src="/js/admin/form.js?v=@DateTime.Now.DayOfYear" charset="utf-8"></script>
     @RenderSection("Scripts", required: false)
 </body>
 

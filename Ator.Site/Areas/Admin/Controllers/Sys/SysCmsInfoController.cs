@@ -145,7 +145,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
                 var lstColumn = new List<string>()
                 {
                     nameof(SysCmsInfo.SysCmsInfoId),nameof(SysCmsInfo.Remark), nameof(SysCmsInfo.Sort), nameof(SysCmsInfo.Status), nameof(SysCmsInfo.InfoTitle), nameof(SysCmsInfo.InfoAbstract), nameof(SysCmsInfo.InfoCheckTime),nameof(SysCmsInfo.InfoCheckUser),nameof(SysCmsInfo.InfoContent),nameof(SysCmsInfo.InfoEditTime),nameof(SysCmsInfo.InfoEditUser),nameof(SysCmsInfo.InfoLable),nameof(SysCmsInfo.InfoPublishTime),nameof(SysCmsInfo.InfoSecTitle),nameof(SysCmsInfo.InfoSource),nameof(SysCmsInfo.InfoTop),nameof(SysCmsInfo.InfoType),nameof(SysCmsInfo.InfoImage)
-                      ,nameof(SysCmsInfo.InfoAuthor)
+                      ,nameof(SysCmsInfo.InfoAuthor), nameof(SysCmsInfo.InfoContentImage)
                 };
                 if (!string.IsNullOrEmpty(columns))//固定过滤只修改某字段
                 {

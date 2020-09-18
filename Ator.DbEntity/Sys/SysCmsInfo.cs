@@ -56,6 +56,11 @@ namespace Ator.DbEntity.Sys
         [SugarColumn(ColumnDataType = "longtext", IsNullable = true)]
         public string InfoContent { get; set; } = "";
 
+        [Display(Name = "图片信息内容")]
+        [Column(TypeName = "longtext")]
+        [SugarColumn(ColumnDataType = "text", IsNullable = true)]
+        public string InfoContentImage { get; set; } = "";
+
         [SugarColumn(IsNullable = true)]
         public int? InfoTop { get; set; } = 0;
 

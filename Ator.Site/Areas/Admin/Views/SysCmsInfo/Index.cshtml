@@ -76,7 +76,9 @@
             _cols = [[
                 { type: 'checkbox', fixed: 'left' }
                 , { field: 'SysCmsInfoId', title: 'ID', width: 0, hide: true, fixed: 'left', unresize: true }
+                , { field: 'InfoType', title: '栏目' }
                 , { field: 'InfoTitle', title: '信息标题', edit: true, sort: true }
+                , { field: 'InfoSecTitle', title: '副标题', edit: true, sort: true }
                 , { field: 'InfoSource', title: '信息来源', edit: true, sort: true }
                 , { field: 'InfoAuthor', title: '作者', edit: true, sort: true }
                 , { field: 'InfoTop', title: '置顶级', edit: true,  sort: true }
@@ -86,7 +88,7 @@
                 , { field: 'InfoPublishTime', title: '发布时间',  sort: true }
 
                 //, { field: 'Remark', title: '备注', edit: true, sort: true }
-                , { field: 'CreateTime', title: '创建时间', width: 120, sort: true }
+                //, { field: 'CreateTime', title: '创建时间', width: 120, sort: true }
                 , { field: 'Status', title: '状态', width: 80, sort: true, templet: '#switchTpl', unresize: true }
                 , { fixed: 'right', title: '操作', toolbar: '#barDemo', width: 220 }
             ]];

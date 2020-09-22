@@ -27,7 +27,7 @@ namespace Ator.Site
         {
             get
             {
-                return Guid.NewGuid().ToString("N");
+                return Utility.Helper.GuidHelper.NewSequentialGuid().ToString("N");
             }
         }
 

@@ -26,6 +26,15 @@ namespace Ator.Service
         /// <returns></returns>
         public async Task<MenusInfoResultDTO> GetMenu(string userId = "")
         {
+            var lstRolePageIds = new List<string>();
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var sql = $@"select b.syspageid from sys_userrole  a
+                            left join sys_rolepage b on a.SysRoleId = b.SysRoleId
+                            where a.`Status` = 1 and b.`Status` = 1 and a.SysUserId = '{userId}'";
+                lstRolePageIds = await DbContext.Ado.SqlQueryAsync<string>(userId);
+            }
+
             var rootMenu = new MenusInfoResultDTO();
             //LogoInfo初始化
             var imageModel = await DbContext.GetByIdAsync<SysLinkItem>("LogoImgLink");
@@ -37,7 +46,16 @@ namespace Ator.Service
             rootMenu.homeInfo = new HomeInfo();
 
             //MenuInfo初始化
-            var allSysPage = DbContext.GetList<SysPage>(o => o.Status == 1, "SysPageParent,Sort");
+            var allSysPage = new List<SysPage>();
+            if (lstRolePageIds.Count > 0)
+            {
+                allSysPage = DbContext.GetList<SysPage>(o => o.Status == 1 && lstRolePageIds.Contains(o.SysPageId), "SysPageParent,Sort");
+            }
+            else
+            {
+                allSysPage = DbContext.GetList<SysPage>(o => o.Status == 1, "SysPageParent,Sort");
+            }
+            
             var allTopPage = allSysPage.Where(o => string.IsNullOrEmpty(o.SysPageParent)).ToList();
             rootMenu.menuInfo = new List<SystemMenu>();
             foreach (var topPage in allTopPage)

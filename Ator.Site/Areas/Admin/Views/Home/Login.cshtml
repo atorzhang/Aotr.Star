@@ -146,7 +146,7 @@
 
                     <div class="layui-form-item">
                         <input type="hidden" name="IsRedict" value="1">
-                        <input type="checkbox" name="rememberMe" value="true" lay-skin="primary" title="记住密码">
+                        <input type="checkbox" name="rememberMe" id="rememberMe" value="true" lay-skin="primary" title="记住我">
                     </div>
                     <div class="layui-form-item">
                         <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit="" lay-filter="login">登 入</button>
@@ -193,7 +193,8 @@
             var loginObj = {
                 UserName : data.username,
                 Password : data.password,
-                PIN: data.PIN
+                PIN: data.PIN,
+                RememberMe: data.rememberMe
             }
             var _index = layer.load();
             $.ajax({

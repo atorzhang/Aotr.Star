@@ -31,7 +31,7 @@ namespace Ator.DbEntity.Factory
                         OnLogExecuted = onExecutedEvent?? ((string sql, SugarParameter[] pars) =>
                         {
                             var keyDic = new KeyValuePair<string, SugarParameter[]>(sql, pars);
-                            this._logger.LogInformation($"ExecuteSql：【{Newtonsoft.Json.JsonConvert.SerializeObject(keyDic)}】");
+                            this._logger.LogDebug($"ExecuteSql：【{Newtonsoft.Json.JsonConvert.SerializeObject(keyDic)}】");
                         })
                  }
             };

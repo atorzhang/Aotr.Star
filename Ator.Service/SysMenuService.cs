@@ -27,17 +27,21 @@ namespace Ator.Service
         public async Task<MenusInfoResultDTO> GetMenu(string userId = "")
         {
             var lstRolePageIds = new List<string>();
+            var lstRoles = new List<string>();
+
             if (!string.IsNullOrEmpty(userId))
             {
-                var sql = $@"select b.syspageid from sys_userrole  a
+                var sql = $@"select b.SysPageId from sys_userrole  a
                             left join sys_rolepage b on a.SysRoleId = b.SysRoleId
                             where a.`Status` = 1 and b.`Status` = 1 and a.SysUserId = '{userId}'";
-                lstRolePageIds = await DbContext.Ado.SqlQueryAsync<string>(userId);
+                lstRolePageIds = await DbContext.Ado.SqlQueryAsync<string>(sql);
+                //权限Id列表
+                lstRoles = (await DbContext.GetListAsync<SysUserRole>(o => o.SysUserId == userId)).Select(o => o.SysRoleId).ToList();
             }
 
             var rootMenu = new MenusInfoResultDTO();
             //LogoInfo初始化
-            var imageModel = await DbContext.GetByIdAsync<SysLinkItem>("LogoImgLink");
+            var imageModel = await DbContext.GetByIdAsync<SysLinkItem>("0000_LogoImgLink");
             rootMenu.logoInfo.image = imageModel?.SysLinkImg;
             var siteNameModel = await DbContext.GetAsync<SysSetting>(o => o.SysSettingId == "SiteName");
             rootMenu.logoInfo.title = siteNameModel?.SetValue;
@@ -47,7 +51,9 @@ namespace Ator.Service
 
             //MenuInfo初始化
             var allSysPage = new List<SysPage>();
-            if (lstRolePageIds.Count > 0)
+
+            //账号不是Admin且用户角色不是Admin,就开启菜单页面过滤
+            if (userId != "0000_admin" && !lstRoles.Contains("0000_roleAdmin"))
             {
                 allSysPage = DbContext.GetList<SysPage>(o => o.Status == 1 && lstRolePageIds.Contains(o.SysPageId), "SysPageParent,Sort");
             }

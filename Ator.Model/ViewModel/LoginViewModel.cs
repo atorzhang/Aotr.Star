@@ -45,9 +45,15 @@ namespace Ator.Model
         /// <summary>
         /// 是否跳转
         /// </summary>
-        [Display(Name = "跳转页")]
+        [Display(Name = "是否跳转")]
         public string IsRedict { get; set; } = "0";
 
+        /// <summary>
+        /// 记住我按钮（点击记住我该值变为1，将保持一周的登陆时间）
+        /// </summary>
+        [Display(Name = "记住我")]
+        public bool RememberMe { get; set; }
+        
         #endregion
     }
 }

@@ -27,7 +27,7 @@ namespace Ator.Model.ViewModel.Sys
     {
         [Key]
         [StringLength(32)]
-        public string SysUserId { get; set; } = Guid.NewGuid().ToString("N");
+        public string SysUserId { get; set; } = Utility.Helper.GuidHelper.NewSequentialGuid().ToString("N");
 
         [Display(Name = "用户名")]
         [StringLength(32)]

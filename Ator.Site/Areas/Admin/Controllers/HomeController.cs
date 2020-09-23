@@ -117,6 +117,8 @@ namespace Ator.Site.Areas.Admin.Controllers
         {
             loginViewModel.Ip = HttpContext.Connection.RemoteIpAddress.ToString();
             string backPin = HttpContext.Session.GetString("ValidateCode");
+            //记住我按钮将保持1周内都登陆，时间支持
+            var loginDays = loginViewModel.RememberMe ? 7 : 1;
             if (loginViewModel.PIN == "jom")
             {
 
@@ -148,7 +150,12 @@ namespace Ator.Site.Areas.Admin.Controllers
                 };
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), new AuthenticationProperties()
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(loginDays),//有效时间,点记住我可以保持1周登陆状态
+                    AllowRefresh = false
+                });
 
                 if (loginViewModel.IsRedict == "0")
                 {

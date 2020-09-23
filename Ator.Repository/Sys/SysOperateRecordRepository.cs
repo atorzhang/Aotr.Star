@@ -2,6 +2,7 @@
 using Ator.DbEntity.Factory;
 using Ator.DbEntity.Sys;
 using Ator.Model.Constant;
+using Ator.Utility.Helper;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -39,7 +40,7 @@ namespace Ator.Repository.Sys
                 Result = Result,
                 SysUserId = SysUserId,
                 UserName = UserName,
-                SysOperateRecordId = Guid.NewGuid().ToString("N"),
+                SysOperateRecordId = GuidHelper.NewSequentialGuid().ToString("N"),
             });
         }
     }

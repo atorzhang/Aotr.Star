@@ -47,7 +47,7 @@ var uploadImageInit = function (btn, imgid, inputid, txtid) {
         }
         var uploadInst = upload.render({
             elem: '#' + btn
-            , url: '/Common/File/ImgUpload?saveDir=column_img'
+            , url: '/Common/File/ImgUpload?saveDir=column_img&hasMonth=1'
             , before: function (obj) {
                 //预读本地文件示例，不支持ie8
                 obj.preview(function (index, file, result) {
@@ -83,15 +83,15 @@ var uploadImagesInit = function (btn, imgsid, inputid, txtid) {
             upload = layui.upload,
             $ = layui.jquery;
         //多图上传删除单张图片
-        window.deleteImages = function (obj) {
+        window.deleteImages = function (obj,thisInputId) {
             var src = $(obj).prev().attr('src');
             var src1 = src + ',';
             var src2 = ',' + src;
-            var beforeValue = $("#" + inputid).val();
+            var beforeValue = $("#" + thisInputId).val();
             beforeValue = beforeValue.replace(src1, '');
             beforeValue = beforeValue.replace(src2, '');
             beforeValue = beforeValue.replace(src, '');
-            $("#" + inputid).val(beforeValue);
+            $("#" + thisInputId).val(beforeValue);
             $(obj).parent().remove();
         };
         //初始化图片显示
@@ -102,15 +102,17 @@ var uploadImagesInit = function (btn, imgsid, inputid, txtid) {
                 var lis = [];
                 lis.push('<div class="layui-input-inline">');
                 lis.push('<img src="' + inputValues[i] + '" class="layui-upload-img" style="height:120px;width:100%"> ');
-                lis.push('<a class="layui-btn layui-btn-danger layui-btn-xs demo-reload" onclick="deleteImages(this)">删除</a></div>');
+                lis.push('<a class="layui-btn layui-btn-danger layui-btn-xs demo-reload" onclick="deleteImages(this,\'' + inputid +'\')">删除</a></div>');
                 $('#' + imgsid).append(lis.join(''));
             }
         }
         //初始化上传插件
+
         upload.render({
             elem: '#' + btn
-            , url: '/Common/File/ImgUpload?saveDir=info_imgs'
+            , url: '/Common/File/ImgUpload?saveDir=info_imgs&hasMonth=1'
             , multiple: true
+            , number : 20
             , before: function (obj) {
                 //预读本地文件示例，不支持ie8
                 obj.preview(function (index, file, result) {
@@ -131,7 +133,7 @@ var uploadImagesInit = function (btn, imgsid, inputid, txtid) {
                         var lis = [];
                         lis.push('<div class="layui-input-inline" style="margin-left:10px">');
                         lis.push('<img src="' + lstImg[i] + '" class="layui-upload-img" style="height:120px;width:100%">');
-                        lis.push('<a class="layui-btn layui-btn-danger layui-btn-xs demo-reload" onclick="deleteImages(this)">删除</a></div>');
+                        lis.push('<a class="layui-btn layui-btn-danger layui-btn-xs demo-reload" onclick="deleteImages(this,\'' + inputid +'\')">删除</a></div>');
                         $('#' + imgsid).append(lis.join(''));
                     }
                     //添加到input中

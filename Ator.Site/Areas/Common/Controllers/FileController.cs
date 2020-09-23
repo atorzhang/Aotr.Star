@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Ator.Model.Api;
+using Ator.Utility.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
@@ -64,6 +65,10 @@ namespace Ator.Site.Areas.Common.Controllers
                 saveDirStr = saveDir.ToString();
             }
             //文件保存目录
+            if(Request.Query["hasMonth"] == "1")
+            {
+                saveDirStr += "/" + DateTime.Now.ToString("yyyyMM");
+            }
             string contentRootPath = _hostingEnvironment.ContentRootPath;
             string savePath = "/wwwroot/upload/kindeditor/" + dirName + "/" + saveDirStr;
             string dirPath = contentRootPath + savePath;
@@ -72,7 +77,7 @@ namespace Ator.Site.Areas.Common.Controllers
                 Directory.CreateDirectory(dirPath);
             }
 
-            String newFileName = DateTime.Now.ToString("_yyyyMMddHHmmss_ffff", DateTimeFormatInfo.InvariantInfo) + fileExt;
+            String newFileName = DateTime.Now.ToString("_yyyyMMdd_"+GenHelper.GuidTo16String(), DateTimeFormatInfo.InvariantInfo) + fileExt;
             String filePath = dirPath + "/" + newFileName;
             using (FileStream fs = System.IO.File.Create(filePath))
             {
@@ -124,9 +129,15 @@ namespace Ator.Site.Areas.Common.Controllers
             {
                 saveDirStr = saveDir.ToString();
             }
+            //文件保存目录
+            if (Request.Query["hasMonth"] == "1")
+            {
+                saveDirStr += "/" + DateTime.Now.ToString("yyyyMM");
+            }
+
             //相对程序主目录路径
             string savePath = "/upload/cms/" + dirName + "/" + saveDirStr;
-
+           
             //返回文件集合
             List<string> returnImgs = new List<string>();
             //循环保存文件
@@ -151,7 +162,7 @@ namespace Ator.Site.Areas.Common.Controllers
                     Directory.CreateDirectory(dirPath);
                 }
                 //新文件名称
-                var newFileName = DateTime.Now.ToString("_yyyyMMddHHmmss_ffff", DateTimeFormatInfo.InvariantInfo) + fileExt;
+                var newFileName = DateTime.Now.ToString("_yyyyMMdd_"+GenHelper.GuidTo16String(), DateTimeFormatInfo.InvariantInfo) + fileExt;
                 var filePath = dirPath + "/" + newFileName;//新文件物理全路径
                 using (FileStream fs = System.IO.File.Create(filePath))
                 {

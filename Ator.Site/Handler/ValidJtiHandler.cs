@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Ator.Common.Web.Handler
+namespace Ator.Site.Handler
 {
     /// <summary>
     /// 验证jwtToken有效性

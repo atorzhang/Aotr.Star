@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Ator.Common.Web.Helper
+namespace Ator.Site.Helper
 {
     public static class UrlHelper
     {

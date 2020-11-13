@@ -5,16 +5,16 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
-using Ator.Common.Web.Helper;
 using Ator.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
-using Ator.Common.Web.Config;
 using Ator.DbEntity.Sys;
 using Ator.DbEntity.Factory;
 using Microsoft.Extensions.Configuration;
+using Ator.Site.Config;
+using Ator.Site.Helper;
 
 namespace Ator.Site.Controllers
 {

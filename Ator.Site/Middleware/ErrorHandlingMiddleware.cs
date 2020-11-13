@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Ator.Common.Web.Middleware
+namespace Ator.Site.Middleware
 {
     public class ErrorHandlingMiddleware
     {

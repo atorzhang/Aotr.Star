@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Ator.Common.Web.Helper
+namespace Ator.Site.Helper
 {
     public class NLogHelper
     {

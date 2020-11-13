@@ -1,4 +1,4 @@
-﻿using Ator.Common.Web.Helper;
+﻿using Ator.Site.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

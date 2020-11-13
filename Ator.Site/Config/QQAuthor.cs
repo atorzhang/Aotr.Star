@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Ator.Common.Web.Config
+namespace Ator.Site.Config
 
 {
     /// <summary>

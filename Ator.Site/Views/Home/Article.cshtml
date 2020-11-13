@@ -1,0 +1,128 @@
+﻿@{
+    ViewData["Title"] = "文章列表";
+}
+<!-- 本页样式表 -->
+@section Css{
+    <link href="/css/Blog/article.css" rel="stylesheet" />
+    <link href="/css/Blog/blog.css" rel="stylesheet" />
+}
+<div class="blog-body">
+    <div class="blog-container">
+        <blockquote class="layui-elem-quote sitemap layui-breadcrumb shadow" style="visibility: visible;">
+            <a href="/Home/Index" title="网站首页">网站首页<span class="layui-box">&gt;</span></a>
+            <a><cite>文章专栏</cite></a>
+        </blockquote>
+        <div class="blog-main">
+
+            <div id="parentArticleList" class="blog-main-left animated slideInLeft">
+                <div class="flow-default" id="layArticleList">
+
+
+                </div>
+            </div>
+
+            <div class="blog-main-right">
+
+                <div class="blog-search animated fadeInRight">
+                    <div class="layui-form-item">
+                        <div class="search-keywords  shadow">
+                            <input type="text" id="keywords" name="keywords" lay-filter="searchInput" lay-verify="required" placeholder="输入关键词搜索" autocomplete="off" class="layui-input">
+                            <input id="SysCmsColumnId" type="hidden" value="" />
+                        </div>
+                        <div class="search-submit  shadow">
+                            <a class="search-btn" lay-submit="searchForm" lay-filter="searchForm"><i class="fa fa-search"></i></a>
+                        </div>
+                        
+                        
+                    </div>
+                </div>
+
+                <div class="article-category shadow categoryOut">
+
+                    <div class="article-category-title">分类导航</div>
+                    <a href="javascript:;" onclick="searchActicle('')">全部</a>
+                    @foreach (var item in ViewBag.SysCmsColumnSelect)
+                    {
+                        <a href="javascript:searchActicle('@item.Key')">@item.Value</a>
+                    }
+                    <div class="clear"></div>
+                </div>
+
+                <div class="layui-tab layui-tab-brief shadow animated fadeInRight" lay-filter="docDemoTabBrief">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">点击排行</li>
+                        <li>评论排行</li>
+                    </ul>
+                    <div class="layui-tab-content">
+                        <div class="layui-tab-item layui-show">
+                            <ul class="blog-module-ul">
+                                @for (int i = 0; i < ViewBag.InfoTopCliks.Count; i++)
+                                {
+                                    SysCmsInfoSearchDto item = ViewBag.InfoTopCliks[i];
+                                    <li>
+                                        <span>
+                                            @switch (i)
+                                            {
+                                                case 0:
+                                                    <i class="layui-badge-rim layui-bg-red">1</i>
+                                                    break;
+                                                case 1:
+                                                    <i class="layui-badge-rim layui-bg-orange">2</i>
+                                                    break;
+                                                case 2:
+                                                    <i class="layui-badge-rim layui-bg-green">3</i>
+                                                    break;
+                                                default:
+                                                    <i class="layui-badge-rim">@(i + 1)</i>
+                                                    break;
+                                            }
+                                        </span> &nbsp;&nbsp;
+                                        <a href="/Home/Detail?id=@item.SysCmsInfoId">@item.InfoTitle</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="layui-tab-item">
+                            <ul class="blog-module-ul">
+                                @for (int i = 0; i < ViewBag.InfoTopComents.Count; i++)
+                                {
+                                    SysCmsInfoSearchDto item = ViewBag.InfoTopComents[i];
+                                    <li>
+                                        <span>
+                                            @switch (i)
+                                            {
+                                                case 0:
+                                                    <i class="layui-badge-rim layui-bg-red">1</i>
+                                                    break;
+                                                case 1:
+                                                    <i class="layui-badge-rim layui-bg-orange">2</i>
+                                                    break;
+                                                case 2:
+                                                    <i class="layui-badge-rim layui-bg-green">3</i>
+                                                    break;
+                                                default:
+                                                    <i class="layui-badge-rim">@(i + 1)</i>
+                                                    break;
+                                            }
+                                        </span> &nbsp;&nbsp;
+                                        <a href="/Home/Detail?id=@item.SysCmsInfoId">@item.InfoTitle</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="category-toggle"><i class="fa fa-chevron-left"></i></div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+
+<!-- 本页脚本 -->
+@section Scripts{
+    <script src="/js/Blog/article.js"></script>
+
+}
+

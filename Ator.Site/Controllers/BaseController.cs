@@ -31,7 +31,7 @@ namespace Ator.Site
             }
         }
 
-        //登录数据保存
+        //后台登录数据保存
         public UserViewModel CurrentLoginUser
         {
             get
@@ -68,6 +68,78 @@ namespace Ator.Site
                 }
             }
             return string.Empty;
+        }
+
+        public UserInfo _UserInfo
+        {
+            get
+            {
+                return new UserInfo(HttpContext);
+            }
+        }
+        //前台登录数据保存
+        public class UserInfo
+        {
+            public HttpContext httpContext;
+            public string UserName
+            {
+                get
+                {
+                    return httpContext.Session.GetString("UserName");
+                }
+                set
+                {
+                    httpContext.Session.SetString("UserName", value);
+                }
+            }
+            public string UserId
+            {
+                get
+                {
+                    return httpContext.Session.GetString("UserId");
+                }
+                set
+                {
+                    httpContext.Session.SetString("UserId", value);
+                }
+            }
+            public string Avatar
+            {
+                get
+                {
+                    return httpContext.Session.GetString("Avatar");
+                }
+                set
+                {
+                    httpContext.Session.SetString("Avatar", value);
+                }
+            }
+            public string UserUnit
+            {
+                get
+                {
+                    return httpContext.Session.GetString("UserUnit");
+                }
+                set
+                {
+                    httpContext.Session.SetString("UserUnit", value);
+                }
+            }
+            public string UserType
+            {
+                get
+                {
+                    return httpContext.Session.GetString("UserType");
+                }
+                set
+                {
+                    httpContext.Session.SetString("UserType", value);
+                }
+            }
+            public UserInfo(HttpContext context)
+            {
+                httpContext = context;
+            }
         }
         #endregion
         /// <summary>

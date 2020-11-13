@@ -181,6 +181,32 @@ namespace Ator.Repository
 
         #endregion
 
+        #region 获取数量
+
+        /// <summary>
+        /// 获取数量
+        /// </summary>
+        /// <typeparam name="whereExp">条件</typeparam>
+        /// <param name="db"></param>
+        /// <returns></returns>
+        public static int Count<TSource>(this SqlSugarClient db, Expression<Func<TSource, bool>> whereExp) where TSource : EntityDb, new()
+        {
+            return db.Queryable<TSource>().Where(whereExp).Count();
+        }
+
+        /// <summary>
+        /// [异步]获取数量
+        /// </summary>
+        /// <typeparam name="whereExp">条件</typeparam>
+        /// <param name="db"></param>
+        /// <returns></returns>
+        public static async Task<int> CountAnync<TSource>(this SqlSugarClient db, Expression<Func<TSource, bool>> whereExp) where TSource : EntityDb, new()
+        {
+            return await db.Queryable<TSource>().Where(whereExp).CountAsync();
+        }
+
+        #endregion
+
         #region 根据Linq表达式条件获取列表
 
         /// <summary>

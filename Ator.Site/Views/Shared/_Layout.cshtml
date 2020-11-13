@@ -1,14 +1,126 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Ator.Site</title>
- 
+    <meta http-equiv="Content-Type" content="text/html; Charset=utf-8" />
+    <meta http-equiv="Content-Language" content="zh-CN" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <title>@ViewData["Title"] - @ViewBag.SiteName</title>
+    <link rel="shortcut icon" href="~/images/Blog/logo.png" type="image/x-icon" />
+    <!--Layui-->
+    <link href="/lib/layui-v2.5.5/css/layui.css" rel="stylesheet" />
+    <!--font-awesome-->
+    <link href="/fonts/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <!--全局样式表-->
+    <link href="/css/Blog/global.css" rel="stylesheet" />
+    <link href="/css/Blog/animate.min.css" rel="stylesheet" />
+    <!-- 本页样式表 -->
+    @RenderSection("Css", required: false)
 </head>
+
 <body>
+
+    <nav id="h" class="blog-nav layui-header">
+        <div class="blog-container">
+
+            @if (string.IsNullOrEmpty(ViewBag.userName))
+            {
+                <a href="/QQAuthor/Index" title="使用QQ登录" class="blog-user">
+                    <i class="fa fa-qq"></i>
+                </a>
+            }
+            else
+            {
+                <a href="/QQAuthor/LogOut" title="退出登录" class="blog-user">
+                    <img src="@ViewBag.Avatar" />
+                </a>
+            }
+
+
+            <a class="blog-logo" href="/Home/Index">@ViewBag.SiteName</a>
+
+            <ul class="layui-nav" lay-filter="nav">
+                <li class="layui-nav-item">
+                    <a href="/Home/index"><i class="fa fa-home fa-fw"></i>&nbsp;网站首页</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="/Home/Article"><i class="fa fa-file-text fa-fw"></i>&nbsp;文章专栏</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="/Home/Picture"><i class="fa fa-paper-plane-o fa-fw"></i>&nbsp;杂七杂八</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="/Home/Timeline"><i class="fa fa-hourglass-half fa-fw"></i>&nbsp;点点滴滴</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="/Home/About"><i class="fa fa-info fa-fw"></i>&nbsp;关于本站</a>
+                </li>
+                <span class="layui-nav-bar"></span>
+            </ul>
+
+            <a class="blog-navicon" href="javascript:;">
+                <i class="fa fa-navicon"></i>
+            </a>
+        </div>
+    </nav>
+
     @RenderBody()
-    
+
+    <footer id="f" class="blog-footer">
+        <p>
+            <span>Copyright</span><span>©</span><span>@DateTime.Now.Year</span>
+            <a href="@ViewBag.SiteUrl">@ViewBag.SiteName</a><span>@ViewBag.SiteDesign</span>
+        </p>
+        <p>
+            <a href="http://www.miitbeian.gov.cn" target="_blank">@ViewBag.SiteICP</a>
+        </p>
+    </footer>
+
+    <ul class="layui-nav layui-nav-tree layui-nav-side blog-nav-left layui-hide" lay-filter="nav">
+        <li class="layui-nav-item">
+            <a href="/Home/Index"><i class="fa fa-home fa-fw"></i>&nbsp;网站首页</a>
+        </li>
+        <li class="layui-nav-item">
+            <a href="/Home/Article"><i class="fa fa-file-text fa-fw"></i>&nbsp;文章专栏</a>
+        </li>
+        <li class="layui-nav-item">
+            <a href="/Home/Picture"><i class="fa fa-paper-plane-o fa-fw"></i>&nbsp;杂七杂八</a>
+        </li>
+        <li class="layui-nav-item">
+            <a href="/Home/Timeline"><i class="fa fa-road fa-fw"></i>&nbsp;点点滴滴</a>
+        </li>
+        <li class="layui-nav-item">
+            <a href="/Home/About"><i class="fa fa-info fa-fw"></i>&nbsp;关于本站</a>
+        </li>
+        <span class="layui-nav-bar"></span>
+    </ul>
+
+    <div class="blog-share layui-hide">
+        <div class="blog-share-body">
+            <div style="width: 200px;height:100%;">
+                <div class="bdsharebuttonbox bdshare-button-style0-32" data-bd-bind="@ViewBag.SiteQQ">
+                    <a class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a>
+                    <a class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+                    <a class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+                    <a class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="blog-mask animated layui-hide"></div>
+
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+            asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+            asp-fallback-test="window.jQuery"
+            crossorigin="anonymous"
+            integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
+    </script>
+    @*<script src="/js/Blog/jquery.min.js"></script>*@
+
+    <script src="/lib/layui-v2.5.5/layui.js"></script>
+
+    <script src="/js/Blog/global.js"></script>
+
     @RenderSection("Scripts", required: false)
 </body>
 </html>

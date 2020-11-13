@@ -134,6 +134,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Ator.Common.Web\Ator.Common.Web.csproj" />
     <ProjectReference Include="..\Ator.DAL\Ator.DAL.csproj" />
     <ProjectReference Include="..\Ator.DbEntity\Ator.DbEntity.csproj" />
     <ProjectReference Include="..\Ator.IService\Ator.IService.csproj" />

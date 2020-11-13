@@ -11,6 +11,7 @@ using LinqKit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -55,7 +56,7 @@ namespace Ator.Service
                 predicate = predicate.And(i => i.Status.Equals(int.Parse(Status)));
             }
             #endregion
-            var pageData = DbContext.GetPageList<SysCmsInfo, SysCmsInfoSearchDto>(predicate, ordering, Page, Limit);
+            var pageData = DbContext.GetPageList<SysCmsInfo, SysCmsInfoSearchDto>(predicate.And(o => true), ordering, Page, Limit);
             return pageData;
         }
 
@@ -83,7 +84,7 @@ namespace Ator.Service
                 predicate = predicate.And(i => i.Status.Equals(int.Parse(Status)));
             }
             #endregion
-            var pageData = await DbContext.GetPageListAsync<SysCmsInfo, SysCmsInfoSearchDto>(predicate, ordering, Page, Limit);
+            var pageData = await DbContext.GetPageListAsync<SysCmsInfo, SysCmsInfoSearchDto>(predicate.And(o => true), ordering, Page, Limit);
             return pageData;
         }
 

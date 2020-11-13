@@ -1,8 +1,282 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "首页";
 }
+<!-- 本页样式表 -->
+@section Css{
+    <link href="/css/Blog/index.css" rel="stylesheet" />
+    <link href="/css/Blog/blog.css" rel="stylesheet" />
+}
+<div class="blog-user"></div>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="blog-body">
+    @*轮播图比例1170:360*@
+    <div class="layui-carousel blog-bg" id="carousel" lay-anim="default" lay-indicator="inside" lay-arrow="always" style="width: 1170px; height: 360px;">
+        <div carousel-item="">
+            @foreach (SysLinkItem item in ViewBag.LinkLunBos)
+            {
+                <div class="bg "><a target="_blank" href="@item.SysLinkUrl"><img src="@item.SysLinkImg" /></a></div>
+            }
+            @*<div class="bg "><img src="~/images/Blog/bg/a.jpg" /></div>
+                <div class="bg "><img src="~/images/Blog/bg/b.jpg" /></div>
+                <div class="bg "><img src="~/images/Blog/bg/c.jpg" /></div>
+                <div class="bg "><img src="~/images/Blog/bg/d.jpg" /></div>
+                <div class="bg "><img src="~/images/Blog/bg/e.jpg" /></div>*@
+        </div>
+        <button class="layui-icon layui-carousel-arrow" lay-type="sub"></button><button class="layui-icon layui-carousel-arrow" lay-type="add"></button>
+    </div>
+    @*轮播图结束*@
+    <div class="blog-container">
+        <div class="blog-main">
+            @*公告*@
+            <div class="home-tips shadow">
+                <i style="float:left;line-height:17px;" class="fa fa-volume-up"></i>
+                <div class="home-tips-container">
+                    @foreach (SysLinkItem item in ViewBag.LinkGongGaos)
+                    {
+                        <span style="color: rgb(0, 150, 136); cursor: pointer; display: none;">
+                            <p><span>@Html.Raw(item.SysLinkUrl)</span></p>
+                        </span>
+                    }
+                </div>
+            </div>
+            @*公告结束*@
+
+            <div class="blog-main-left animated slideInLeft">
+                <div class="flow-default" id="layArticleList">
+
+                    @*<div class="article shadow animated zoomIn">
+                        <div class="article-left ">
+                            <img src="/images/Blog/jzytp.JPG" alt="Tomcat优化性能，GC优化">
+                        </div>
+                        <div class="article-right">
+                            <div class="article-title">
+                                <span class="article_is_top">置顶</span>&nbsp;<span class="article_is_yc">原创</span>&nbsp;
+                                <a href="/Home/Detail">Tomcat优化性能，GC优化</a>
+                            </div>
+                            <div class="article-abstract">
+                                首先在开始之前我们需要知道，在不同的操作系统位数下，（即32位和64位）32位操作系统的GC会受限于最大2G内存的限制。不管你物理机上有多少内存，GC只能使用到2G,所
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                        <div class="article-footer">
+                            <span><i class="fa fa-clock-o"></i>&nbsp;&nbsp;2018-07-27 09:34:33</span>
+                            <span class="article-author"><i class="fa fa-user"></i>&nbsp;&nbsp;' 听雨·湘潭</span>
+                            <span><i class="fa fa-tag"></i>&nbsp;&nbsp;<a href=".Netscript:classifyList(10);"> Tomcat</a></span>
+                            <span class="article-viewinfo"><i class="fa fa-eye"></i>&nbsp;286</span>
+                            <span class="article-viewinfo"><i class="fa fa-commenting"></i>&nbsp;3</span>
+                        </div>
+                    </div>
+                   *@
+                    @*<div class="layui-flow-more">
+                        <a href="javascript:;"><cite>加载更多</cite></a>
+                    </div>*@
+                </div>
+            </div>
+
+            <div class="blog-main-right">
+
+                <div class="blogerinfo shadow animated fadeInRight">
+                    <div class="blogerinfo-figure">
+                        <img src="@ViewBag.SiteLogo" alt="@ViewBag.SiteAuthor">
+                    </div>
+                    <p class="blogerinfo-nickname">@ViewBag.SiteAuthor</p>
+                    <p class="blogerinfo-introduce">@Html.Raw(ViewBag.Signature)</p>
+                    <p class="blogerinfo-location"><i class="fa fa-location-arrow"></i>&nbsp;<span>@ViewBag.SiteAddr</span></p>
+                    <hr>
+                    <div class="blogerinfo-contact">
+                        <a target="_blank" id="QQjl" title="QQ交流" href="http://shang.qq.com/email/stop/email_stop.html?qq= @ViewBag.SiteQQ"><i class="fa fa-qq fa-2x"></i></a>
+                        <a target="_blank" id="gwxx" title="给我写信" href="mailto: @ViewBag.SiteEmail"><i class="fa fa-envelope fa-2x"></i></a>
+                        <a target="_blank" id="xlwb" title="新浪微博" href="https://weibo.com/p/ @ViewBag.SiteWeibo"><i class="fa fa-weibo fa-2x"></i></a>
+                        <a target="_blank" id="htgl" title="后台管理" href="/Admin/Home/Index"><i class="fa fa-database fa-2x"></i></a>
+                    </div>
+                </div>
+
+                <div class="layui-tab layui-tab-brief shadow animated fadeInRight" lay-filter="docDemoTabBrief">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">点击排行</li>
+                        <li>评论排行</li>
+                        @*暂时不做推荐*@
+                        @*<li>站长推荐</li>*@
+                    </ul>
+                    <div class="layui-tab-content">
+                        <div class="layui-tab-item layui-show">
+                            <ul class="blog-module-ul">
+                                @for (int i = 0; i < ViewBag.InfoTopCliks.Count; i++)
+                                {
+                                    SysCmsInfoSearchDto item = ViewBag.InfoTopCliks[i];
+                                    <li>
+                                        <span>
+                                            @switch (i)
+                                            {
+                                                case 0:
+                                                    <i class="layui-badge-rim layui-bg-red">1</i>
+                                                    break;
+                                                case 1:
+                                                    <i class="layui-badge-rim layui-bg-orange">2</i>
+                                                    break;
+                                                case 2:
+                                                    <i class="layui-badge-rim layui-bg-green">3</i>
+                                                    break;
+                                                default:
+                                                    <i class="layui-badge-rim">@(i + 1)</i>
+                                                    break;
+                                            }
+                                        </span> &nbsp;&nbsp;
+                                        <a href="/Home/Detail?id=@item.SysCmsInfoId">@item.InfoTitle</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="layui-tab-item">
+                            <ul class="blog-module-ul">
+                                @for (int i = 0; i < ViewBag.InfoTopComents.Count; i++)
+                                {
+                                    SysCmsInfoSearchDto item = ViewBag.InfoTopComents[i];
+                                    <li>
+                                        <span>
+                                            @switch (i)
+                                            {
+                                                case 0:
+                                                    <i class="layui-badge-rim layui-bg-red">1</i>
+                                                    break;
+                                                case 1:
+                                                    <i class="layui-badge-rim layui-bg-orange">2</i>
+                                                    break;
+                                                case 2:
+                                                    <i class="layui-badge-rim layui-bg-green">3</i>
+                                                    break;
+                                                default:
+                                                    <i class="layui-badge-rim">@(i + 1)</i>
+                                                    break;
+                                            }
+                                        </span> &nbsp;&nbsp;
+                                        <a href="/Home/Detail?id=@item.SysCmsInfoId">@item.InfoTitle</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        @*暂时不做推荐*@
+                        @*<div class="layui-tab-item">
+                                <ul class="blog-module-ul">
+                                    <li>
+                                        <span class="article_is_yc">原创</span> &nbsp;&nbsp;
+                                        <a href="/Home/Detail">Tomcat优化性能，GC优化</a>
+                                    </li>
+                                </ul>
+                            </div>*@
+                    </div>
+                </div>
+
+                <div class="blog-module shadow animated fadeInRight">
+                    <div class="blog-module-title"><i class="fa fa-file-text-o"></i>&nbsp;@ViewBag.SetZZJS.SysSettingName</div>
+                    <p>@Html.Raw(ViewBag.SetZZJS.SetValue)</p>
+                </div>
+                <div class="blog-module shadow animated fadeInRight fadeInUp">
+                    <div class="blog-module-title"><i class="layui-icon"></i>&nbsp;热评用户</div>
+                    <ul class="hotusers-list">
+                        @for (int i = 0; i < ViewBag.sortdicCommentUser.Count; i++)
+                        {
+                            SysUser user = ViewBag.sortdicCommentUser[i].Value;
+                            var grade = Ator.Common.Web.Helper.GradeHelper.GetGrade(ViewBag.lstCommentUserCount[i].Value);
+                            var gradeName = Ator.Common.Web.Helper.GradeHelper.GetGradeName(ViewBag.lstCommentUserCount[i].Value);
+                            <li class="hotusers-list-item">
+                                <div class="hotusers-top hotusers-num">@(i + 1)</div>
+                                <div class="hotusers-avator">
+                                    <img src="@user.Avatar" width="45" height="45">
+                                </div>
+                                <div>
+                                    <div class="hotusers-nick">@user.NikeName</div>
+
+                                    <span class="hotusers-level" title="等级 @grade" style="background-image: url(https://changyan.itc.cn/v2/asset/scs/imgs/p-lv0@(grade).png);">
+                                        <i style=" background-image:url(https://changyan.itc.cn/v2/asset/scs/imgs/p-lv01-04.png);">@gradeName</i>
+                                    </span>
+                                    <span class="hotusers-totalcmt">本站评论数：@ViewBag.lstCommentUserCount[i].Value</span>
+                                </div>
+                                <span class="hotusers-icons"></span>
+                            </li>
+                        }
+                        @*<li class="hotusers-list-item">
+                                <div class="hotusers-top hotusers-num">1</div>
+                                <div class="hotusers-avator">
+                                    <img src="http://qzapp.qlogo.cn/qzapp/101477629/B5D5212D0429E4491D932EEEF814FE99/100" width="45" height="45">
+                                </div>
+                                <div>
+                                    <div class="hotusers-nick">Mr. .Net知识海洋</div>
+                                    <span class="hotusers-level" title="等级1" style="background-image: url(https://changyan.itc.cn/v2/asset/scs/imgs/p-lv01.png);">
+                                        <i style=" background-image:url(https://changyan.itc.cn/v2/asset/scs/imgs/p-lv01-04.png);">潜水</i>
+                                    </span>
+                                    <span class="hotusers-totalcmt">本站评论数：4</span>
+                                </div>
+                                <span class="hotusers-icons"></span>
+                            </li>
+                            <li class="hotusers-list-item">
+                                <div class="hotusers-top hotusers-num">2</div>
+                                <div class="hotusers-avator">
+                                    <img src="http://qzapp.qlogo.cn/qzapp/101477629/142350DC6080D761759CA72042447829/100" width="45" height="45">
+                                </div>
+                                <div>
+                                    <div class="hotusers-nick">十七</div>
+                                    <span class="hotusers-level" title="等级2" style="background-image: url(https://changyan.itc.cn/v2/asset/scs/imgs/p-lv02.png);">
+                                        <i style=" background-image:url(https://changyan.itc.cn/v2/asset/scs/imgs/p-lv01-04.png);">潜水</i>
+                                    </span>
+                                    <span class="hotusers-totalcmt">本站评论数：2</span>
+                                </div>
+                                <span class="hotusers-icons"></span>
+                            </li>
+                        *@
+                    </ul>
+                </div>
+                @*最近评论*@
+                <div class="blog-module shadow animated fadeInRight fadeInUp">
+                    <div class="blog-module-title"><i class="layui-icon"></i>&nbsp;最近评论</div>
+                    <ul class="recent-list">
+                        @for (int i = 0; i < ViewBag.comments.Count; i++)
+                        {
+                            SysCmsInfoComment comment = ViewBag.comments[i];
+                            SysUser commentUser = ViewBag.commentUsersRecent[i]; 
+                            <li class="hotusers-list-item">
+                                <div data-name="@commentUser.NikeName" class="remark-user-avator">
+                                    <img src="@commentUser.Avatar" width="45" height="45">
+                                </div>
+                                <div class="remark-content">@Html.Raw(comment.Comment)</div>
+                                <span class="hotusers-icons"></span>
+                            </li>
+                        }
+                        @*<li class="hotusers-list-item">
+                                <div data-name="那么平凡。" class="remark-user-avator">
+                                    <img src="http://qzapp.qlogo.cn/qzapp/101477629/194135EDCD4659E5550C71D6D665F3CB/100" width="45" height="45">
+                                </div>
+                                <div class="remark-content">博主威武</div>
+                                <span class="hotusers-icons"></span>
+                            </li>
+                            <li class="hotusers-list-item">
+                                <div data-name="开始了就别停下来" class="remark-user-avator">
+                                    <img src="http://qzapp.qlogo.cn/qzapp/101477629/436973EA919FEE0B67860BEC897ECC70/100" width="45" height="45">
+                                </div>
+                                <div class="remark-content">uiu</div>
+                                <span class="hotusers-icons"></span>
+                            </li>
+                        *@
+                    </ul>
+                </div>
+                @*友情链接*@
+                <div class="blog-module shadow animated fadeInRight">
+                    <div class="blog-module-title"><i class="fa fa-link"></i>&nbsp;友情链接</div>
+                    <ul class="blogroll">
+                        @foreach (SysLinkItem item in ViewBag.LinkYQLJs)
+                        {
+                            <li>
+                                <a target="_blank" href="@item.SysLinkUrl" title="@item.SysLinkName">@item.SysLinkName</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
 </div>
+<!-- 本页脚本 -->
+@section Scripts{
+    <script src="/js/Blog/index.js"></script>
+}

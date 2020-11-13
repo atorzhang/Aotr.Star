@@ -177,8 +177,8 @@
                         @for (int i = 0; i < ViewBag.sortdicCommentUser.Count; i++)
                         {
                             SysUser user = ViewBag.sortdicCommentUser[i].Value;
-                            var grade = Ator.Common.Web.Helper.GradeHelper.GetGrade(ViewBag.lstCommentUserCount[i].Value);
-                            var gradeName = Ator.Common.Web.Helper.GradeHelper.GetGradeName(ViewBag.lstCommentUserCount[i].Value);
+                            var grade = Ator.Site.Helper.GradeHelper.GetGrade(ViewBag.lstCommentUserCount[i].Value);
+                            var gradeName = Ator.Site.Helper.GradeHelper.GetGradeName(ViewBag.lstCommentUserCount[i].Value);
                             <li class="hotusers-list-item">
                                 <div class="hotusers-top hotusers-num">@(i + 1)</div>
                                 <div class="hotusers-avator">

@@ -36,11 +36,13 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         
         private readonly ILogger _logger;
         private IMapper _mapper;
-        public SysRolePageController(DbFactory factory, ILogger<SysRolePageController> logger, IMapper mapper)
+        private ISysRolePageService _sysRolePageService;
+        public SysRolePageController(DbFactory factory, ILogger<SysRolePageController> logger, IMapper mapper, ISysRolePageService sysRolePageService)
         {
              DbContext = factory.GetDbContext();
             _logger = logger;
             _mapper = mapper;
+            _sysRolePageService = sysRolePageService;
         }
         #endregion
 
@@ -50,6 +52,30 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         {
             return View();
         }
+
+        [HttpGet]
+        public IActionResult GetRoleTree()
+        {
+            var treeData = _sysRolePageService.GetTreeList();
+            return Ok(treeData);
+        }
+
+        [HttpGet]
+        public IActionResult GetRoleDTree()
+        {
+            var treeData = _sysRolePageService.GetDTreeList();
+            return Ok(treeData);
+        }
+
+        [HttpGet]
+        public IActionResult Form(string id)
+        {
+            ViewBag.id = id;
+            ViewBag.isCreate = string.IsNullOrEmpty(id);
+            var model = DbContext.GetById<SysRolePage>(id);
+            return View(model ?? new SysRolePage() { Status = 1 });
+        }
+
 
         #endregion
 

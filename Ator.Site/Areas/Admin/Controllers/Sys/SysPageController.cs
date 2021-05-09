@@ -106,9 +106,12 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
 
             //查询数据
             var searchData = await DbContext.GetPageListAsync<SysPage>(predicate.And(o => true), nameof(SysPage.SysPageNum)+"," + search.Ordering, search.Page, search.Limit);
+
+            var pagesModels = _sysPageService.GetPageList();
             foreach (var item in searchData.Rows)
             {
-                item.SysPageParent = (await DbContext.GetByIdAsync<SysPage>(item.SysPageParent))?.SysPageName;
+                //item.SysPageParent = (await DbContext.GetByIdAsync<SysPage>(item.SysPageParent))?.SysPageName;
+                item.SysPageParent = pagesModels.FirstOrDefault(o => o.Key == item.SysPageParent)?.Value;
             }
             //获得返回集合Dto
             search.ReturnData = searchData.Rows.Select(o => _mapper.Map<SysPageSearchDto>(o)).ToList();

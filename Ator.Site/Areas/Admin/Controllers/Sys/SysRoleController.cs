@@ -37,11 +37,14 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         
         private readonly ILogger _logger;
         private IMapper _mapper;
-        public SysRoleController(DbFactory factory, ILogger<SysRoleController> logger, IMapper mapper)
+        private readonly ISysRolePageService _sysRolePageService;
+
+        public SysRoleController(DbFactory factory, ILogger<SysRoleController> logger, IMapper mapper, ISysRolePageService sysRolePageService)
         {
              DbContext = factory.GetDbContext();
             _logger = logger; 
             _mapper = mapper;
+            _sysRolePageService = sysRolePageService;
         }
         #endregion
 
@@ -62,10 +65,12 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         }
 
         [HttpGet]
-        public IActionResult Detail(string id)
+        public IActionResult Auth(string id)
         {
+            ViewBag.id = id;
             return View();
         }
+        
         #endregion
 
         #region Operate
@@ -200,6 +205,32 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
             }
             return Result(result);
         }
+
+        /// <summary>
+        /// 获取角色授权的xmSelect数据
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetAuthJson(string id)
+        {
+            var data = _sysRolePageService.GetAuthXmSelectList(id);
+            return Ok(data);
+        }
+
+        /// <summary>
+        /// 设置角色页面权限
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <param name="status">数据状态1-正常，2-不通过</param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> SetAuth(string SysRoleId, string AuthPages="")
+        {
+            var ct = await _sysRolePageService.SetAuthPage(SysRoleId, AuthPages);
+            return Result(ct > 0);
+        }
+
         #endregion
     }
 }

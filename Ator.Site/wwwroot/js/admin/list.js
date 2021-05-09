@@ -12,8 +12,8 @@ var _ChecksPath = "Checks";//默认审核路径
 var _DeletesPath = "Deletes";//默认删除路径
 var _SavePath = "Save";//默认保存路径
 var _AddPagePath = "Form";//默认新增打开路径
-var _FormWidth = 900;//弹窗宽度
-var _FormHeight = 600;//弹窗宽度
+var _FormWidth = 1000;//弹窗宽度
+var _FormHeight = 650;//弹窗宽度
 var _isFormFull = false;//弹窗全屏
 
 //表格数据
@@ -69,7 +69,11 @@ window.checksData = function (ids, status,isReload) {
 };
 //数据加载，事件绑定
 window.onload = function () {
-    
+    if (!$("#listTable").length) {
+        console.log("跳过默认的列表初始化操作");
+        return;
+    }
+
     layui.use(['table', 'jquery', 'layer', 'admin'], function () {
         var table = layui.table,
             form = layui.form,

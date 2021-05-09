@@ -37,7 +37,7 @@
         <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
         @*自定义行工具事件*@
-        @*<a class="layui-btn  layui-btn-xs" lay-event="detail">详情</a>*@
+        <a class="layui-btn  layui-btn-xs" lay-event="auth">授权</a>
     </script>
     @*filter*@
     <script type="text/html" id="switchTpl">
@@ -61,7 +61,7 @@
                 , { field: 'Remark', title: '备注', edit: true, sort: true }
                 , { field: 'CreateTime', title: '创建时间', width: 120, sort: true }
                 , { field: 'Status', title: '状态', width: 80, sort: true, templet: '#switchTpl', unresize: true }
-                , { fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150 }
+                , { fixed: 'right', title: '操作', toolbar: '#barDemo', width: 210 }
             ]];
             //重写方法，添加头工具栏事件
             toolBarEvent = function (obj) {
@@ -74,8 +74,8 @@
             //重写方法，添加行工具栏事件detail
             toolEvent = function (obj) {
                 switch (obj.event) {
-                    case "detail":
-                        WeAdminShow('详情' + _pageName, _ContralPath + _AddPagePath + parameter + obj.data[_idFieldName], 850, 550);
+                    case "auth":
+                        WeAdminShow('授权' + _pageName, _ContralPath + 'Auth' + parameter + obj.data[_idFieldName], 850, 550);
                         break;
                 }
             }

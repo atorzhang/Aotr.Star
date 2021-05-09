@@ -1,0 +1,133 @@
+﻿
+@{
+    ViewData["Title"] = "角色权限管理";
+    Layout = "~/Areas/Admin/Views/Shared/_ListLayout.cshtml";
+    ViewData["SecondName"] = "系统管理";
+    ViewData["PageName"] = "角色权限管理";
+}
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <!-- 左树 -->
+        <div class="layui-col-sm12 layui-col-md3 layui-col-lg2">
+            <div class="layui-card">
+                <div class="layui-card-header">权限选择</div>
+                <div class="layui-card-body">
+                    <div class="layui-card-body mini-bar" id="ltTree">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 右表 -->
+        <div class="layui-col-sm12 layui-col-md9 layui-col-lg10">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div class="weadmin-body">
+                        @*查询筛选*@
+                        <div class="layui-row">
+                            <form class="layui-form layui-col-md12 we-search" id="aeSearch">
+                                <input type="hidden" name="SysRoleId" id="SysRoleId">
+                                <button class="layui-btn" type="button" lay-submit="" id="btnSreach" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+                            </form>
+                        </div>
+                        <table class="layui-hide" id="listTable" lay-filter="test"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    
+    @*头工具栏*@
+    <script type="text/html" id="listtoolbar">
+        <div class="layui-btn-container">
+            @*框架头工具固有事件*@
+            <button class="layui-btn layui-btn-sm" lay-event="addItem"><i class="layui-icon layui-icon-add-1"></i>添加</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="deleteItem"><i class="layui-icon layui-icon-delete"></i>删除</button>
+            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="checkPass"><i class="layui-icon layui-icon-ok"></i>通过</button>
+            <button class="layui-btn layui-btn-sm layui-btn-warm" lay-event="checkNoPass"><i class="layui-icon layui-icon-close"></i>不通过</button>
+            @*自定义头工具事件*@
+            @*<button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="toolBarTest"><i class="layui-icon layui-icon-set"></i>测试</button>*@
+        </div>
+    </script>
+    @*行工具*@
+    <script type="text/html" id="barDemo">
+        @*框架行工具固有事件*@
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        @*自定义行工具事件*@
+        @*<a class="layui-btn  layui-btn-xs" lay-event="detail">详情</a>*@
+    </script>
+    @*filter*@
+    <script type="text/html" id="switchTpl">
+        <!-- 状态显示 -->
+        <input type="checkbox" id="{{ d.SysRoleId}}" name="Status" value="1" lay-skin="switch" lay-text="是|否"  lay-filter="statusFilter" {{ d.Status == 1 ? 'checked' : '' }}>
+    </script>
+    @*脚本*@
+    <script src="~/js/lay-config.js"></script>
+    <script>
+        //初始化数据
+        intData = function () {
+            _idFieldName = "SysRolePageId";
+            _pageName = "角色权限管理";
+            _ContralPath = "/Admin/SysRolePage/";
+            _tableTitle = "角色权限表";
+            _cols = [[
+                { type: 'checkbox', fixed: 'left' }
+                , { field: 'SysRolePageId', title: 'ID', width: 0, hide: true, fixed: 'left', unresize: true }
+                , { field: 'SysRoleId', title: '角色', sort: true }
+                , { field: 'SysPageId', title: '页面权限', sort: true }
+
+                , { field: 'Sort', title: '排序', edit: true, sort: true }
+                , { field: 'Remark', title: '备注', edit: true, sort: true }
+                , { field: 'CreateTime', title: '创建时间', width: 120, sort: true }
+                , { field: 'Status', title: '状态', width: 80, sort: true, templet: '#switchTpl', unresize: true }
+                , { fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150 }
+            ]];
+            //重写方法，添加头工具栏事件
+            toolBarEvent = function (obj) {
+                switch (obj.event) {
+                    case "toolBarTest":
+                        layer.msg("toolBarTest");
+                        break;
+                }
+            }
+        }
+        //页面一些逻辑可写在这
+        $(function () {
+            layui.use(['dtree', 'util','table'], function () {
+                var table = layui.table,
+                    util = layui.util,
+                    dtree = layui.dtree;
+
+                var dictTree = dtree.render({
+                    elem: '#ltTree',
+                    url: '/Admin/SysRolePage/GetRoleDTree',
+                    type: 'all',
+                    initLevel: '1',//默认展开层级，当该值大于level时，则会展开树的节点，直到不大于当前待展开节点的level
+                    //dot: false,
+                    method: 'GET',
+                    dataStyle: "layuiStyle",
+                    response: { message: "msg", statusCode: 0 },  //修改response中返回数据的定义
+                    //request: { nodeId: "0" }//自定义参数，组件进行参数拼接时，会将该属性的串拼接到url,然后传递到后台进行数据查询
+                });
+                //树形点击事件
+                dtree.on('node("ltTree")', function (obj) {
+                    var data = obj.param;
+
+                    $("#SysRoleId").val(data.nodeId);
+                    $("#btnSreach").click();
+                    //layer.msg('你选择了：' + data.nodeId + '-' + data.context);
+                    //table.reload('rtTable', {where: {nodeId: data.nodeId}});
+                    //ins1(data.nodeId, "", "");
+                });
+            });
+           
+        })
+    </script>
+}
+

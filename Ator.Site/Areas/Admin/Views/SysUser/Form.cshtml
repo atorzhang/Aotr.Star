@@ -89,9 +89,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label"><span class="we-red">*</span>角色</label>
         <div class="layui-input-block">
-            <input type="checkbox" name="like1[write]" lay-skin="primary" title="超级管理员" checked="">
-            <input type="checkbox" name="like1[read]" lay-skin="primary" title="编辑人员">
-            <input type="checkbox" name="like1[write]" lay-skin="primary" title="宣传人员" checked="">
+            <div id="xmSelect" class="xm-select-demo"></div>
         </div>
     </div>
     <div class="layui-form-item">
@@ -146,6 +144,21 @@
                 return false;
             });
         });
+
+        $.getJSON(_ContralPath + "GetRoleJson", { id: $("#SysUserId").val() }, function (res) {
+            xmObj = xmSelect.render({
+                el: '#xmSelect',
+                toolbar: {
+                    show: true,
+                },
+                name: 'AuthRoles',
+                filterable: true,
+                height: '160px',
+                data: res.data
+            });
+            xmObj.opened();
+        });
+
     </script>
 }
 

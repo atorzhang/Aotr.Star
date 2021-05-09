@@ -23,6 +23,7 @@ using LinqKit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SqlSugar;
 
 namespace Ator.Site.Areas.Admin.Controllers.Sys
 {
@@ -126,7 +127,7 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Save(SysUser model,string columns="")
+        public async Task<IActionResult> Save(SysUser model,string columns="",string AuthRoles="")
         {
             var errMsg = GetModelErrMsg();
             if (!string.IsNullOrEmpty(errMsg))
@@ -171,6 +172,28 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
                 if (result)
                 {
                     _logger.LogInformation($"修改{_entityName}{model.UserName}");
+                }
+            }
+
+            //删除原授权信息
+            var sql = $@"delete from sys_userrole where SysUserId =@SysUserId";
+            await DbContext.Ado.ExecuteCommandAsync(sql, new SugarParameter("@SysUserId", model.SysUserId));
+            if (!string.IsNullOrEmpty(AuthRoles))
+            {
+                //添加授权角色信息
+                foreach (var item in AuthRoles.Split(','))
+                {
+                    var newModel = new SysUserRole
+                    {
+                        CreateTime = DateTime.Now,
+                        CreateUser="",
+                        Sort=0,
+                        Status = 1,
+                        SysRoleId = item,
+                        SysUserId = model.SysUserId,
+                        SysUserRoleId = Guid.NewGuid().ToString("n")
+                    };
+                    await DbContext.InsertAsync(newModel);
                 }
             }
             return result?Ok():Error();
@@ -243,6 +266,19 @@ namespace Ator.Site.Areas.Admin.Controllers.Sys
                s = await DbContext.InsertAsync<SysUser>(item);
             }
             return s ? Ok() : Error();
+        }
+
+
+        /// <summary>
+        /// 获取用户角色数据
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetRoleJson(string id)
+        {
+            var data = _sysUserService.GetRoleXmSelectList(id);
+            return Ok(data);
         }
     }
 }

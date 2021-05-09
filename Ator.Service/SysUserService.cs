@@ -8,6 +8,7 @@ using Ator.Repository.Sys;
 using Ator.Utility.Ext;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Ator.Service
@@ -96,6 +97,35 @@ namespace Ator.Service
             };
             var result = DbContext.Insert(userModel);
             return result?"":"注册失败";
+        }
+
+        /// <summary>
+        /// 获取用户角色下拉框数据
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public List<XmSelectModel> GetRoleXmSelectList(string id)
+        {
+            //已有角色
+            var rolePageIds = DbContext.GetList<SysUserRole>(o => o.Status == 1 && o.SysUserId == id, "Sort").Select(o => o.SysRoleId).ToList();
+
+            //所有角色信息
+            var allRoles = DbContext.GetList<SysRole>(o => o.Status == 1, "Sort");
+            var res = new List<XmSelectModel>();
+            foreach (var item in allRoles)
+            {
+                var addRole = new XmSelectModel
+                {
+                    value = item.SysRoleId,
+                    name = item.RoleName,
+                };
+                if (rolePageIds.Contains(item.SysRoleId))
+                {
+                    addRole.selected = true;
+                }
+                res.Add(addRole);
+            }
+            return res;
         }
     }
 }

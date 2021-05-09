@@ -13,10 +13,10 @@
             <div class="layui-inline">
                 <input type="text" name="SysPageName" placeholder="请输入页面名" autocomplete="off" class="layui-input">
             </div>
-             <div class="layui-inline">
+            <div class="layui-inline">
                 <input type="text" name="SysPageNum" placeholder="请输入页面编号" autocomplete="off" class="layui-input">
             </div>
-            
+
             <button class="layui-btn" type="button" lay-submit="" id="btnSreach" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
         </form>
     </div>
@@ -46,7 +46,7 @@
     @*filter*@
     <script type="text/html" id="switchTpl">
         <!-- 状态显示 -->
-        <input type="checkbox" id="{{ d.SysPageId}}" name="Status" value="1" lay-skin="switch" lay-text="是|否"  lay-filter="statusFilter" {{ d.Status == 1 ? 'checked' : '' }}>
+        <input type="checkbox" id="{{ d.SysPageId}}" name="Status" value="1" lay-skin="switch" lay-text="是|否" lay-filter="statusFilter" {{ d.Status == 1 ? 'checked' : '' }}>
     </script>
     @*脚本*@
     <script>
@@ -59,15 +59,27 @@
             _cols = [[
                 { type: 'checkbox', fixed: 'left' }
                 , { field: 'SysPageId', title: 'ID', width: 0, hide: true, fixed: 'left', unresize: true }
+                , {
+                    field: 'SysPageImg', width: 80, title: '图标', templet: function (d) {
+                        return '<i class="' + d.SysPageImg + '"></i>';
+                    }
+                }
+                , {
+                    field: 'SysPageParent', title: '父级页', sort: true, templet: function (d) {
+                        if (d.SysPageParent == '' || d.SysPageParent == null) {
+                            return '<span class="layui-badge layui-bg-blue">顶级_' + d.SysPageName+'</span>';
+                        }
+                        else {
+                            return '<span class="layui-badge-rim">' + d.SysPageParent + '</span>';
+                        }
+                    }
+                  }
                 , { field: 'SysPageName', title: '页面名称', edit: true, sort: true }
                 , { field: 'SysPageNum', title: '页面编号', edit: true, sort: true }
                 , { field: 'SysPageUrl', title: '页面地址', edit: true, sort: true }
-                , { field: 'SysPageImg', title: '页面图标', edit: true, sort: true }
-                , { field: 'SysPageParent', title: '父级页',  sort: true }
-                
                 , { field: 'Sort', title: '排序', edit: true, sort: true }
                 , { field: 'Remark', title: '备注', edit: true, sort: true }
-                , { field: 'CreateTime', title: '创建时间', width: 120, sort: true }
+                , { field: 'CreateTime', title: '创建时间', width: 160, sort: true }
                 , { field: 'Status', title: '状态', width: 80, sort: true, templet: '#switchTpl', unresize: true }
                 , { fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150 }
             ]];
@@ -93,7 +105,7 @@
             }
         }
         //页面一些逻辑可写在这
-        layui.use(['table', 'jquery', 'admin','laydate'], function () {
+        layui.use(['table', 'jquery', 'admin', 'laydate'], function () {
             var table = layui.table,
                 form = layui.form,
                 $ = layui.jquery;

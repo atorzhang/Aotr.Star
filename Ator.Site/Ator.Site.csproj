@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RazorCompileOnBuild>false</RazorCompileOnBuild>
     <MvcRazorCompileOnPublish>false</MvcRazorCompileOnPublish>
+    <UserSecretsId>654d25e8-e87e-463f-9f9d-5e13b818f622</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

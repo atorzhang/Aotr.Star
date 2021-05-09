@@ -22,5 +22,7 @@ namespace Ator.IService
         string DoRegiste(RegisteViewModel registeViewModel);
 
         string DoChangePwd(string UserName, string oldPwd, string  newPwd);
+
+        List<XmSelectModel> GetRoleXmSelectList(string id);
     }
 }
